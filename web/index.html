@@ -1,0 +1,1190 @@
+<title>Downside</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&family=Public+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+
+<style>
+  :root {
+    color-scheme: light;
+    --ground:      #f1f4f6;
+    --surface:     #ffffff;
+    --surface-2:   #f7f9fa;
+    --ink:         #0e141a;
+    --ink-2:       #59656f;
+    --ink-3:       #8a959e;
+    --hairline:    #dce3e8;
+    --hairline-2:  #eaeff2;
+    --accent:      #17527e;
+    --loss:        #b23a2f;
+    --gain:        #1f6fb8;
+    --mid:         #c3ccd3;
+    --shadow:      0 1px 2px rgba(14,20,26,.06), 0 8px 24px -12px rgba(14,20,26,.18);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      color-scheme: dark;
+      --ground:     #0d1115;
+      --surface:    #171c21;
+      --surface-2:  #1d242a;
+      --ink:        #e9eff3;
+      --ink-2:      #94a2ad;
+      --ink-3:      #6b7883;
+      --hairline:   #27313a;
+      --hairline-2: #1f272e;
+      --accent:     #7bb0e0;
+      --loss:       #d66757;
+      --gain:       #4894e0;
+      --mid:        #3b464f;
+      --shadow:     0 1px 2px rgba(0,0,0,.4), 0 8px 24px -12px rgba(0,0,0,.6);
+    }
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --ground:     #0d1115;
+    --surface:    #171c21;
+    --surface-2:  #1d242a;
+    --ink:        #e9eff3;
+    --ink-2:      #94a2ad;
+    --ink-3:      #6b7883;
+    --hairline:   #27313a;
+    --hairline-2: #1f272e;
+    --accent:     #7bb0e0;
+    --loss:       #d66757;
+    --gain:       #4894e0;
+    --mid:        #3b464f;
+    --shadow:     0 1px 2px rgba(0,0,0,.4), 0 8px 24px -12px rgba(0,0,0,.6);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--ground);
+    color: var(--ink);
+    font-family: "Public Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+    font-size: 15px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap { max-width: 1220px; margin: 0 auto; padding: 32px 24px 72px; }
+
+  /* ---------- masthead ---------- */
+  .masthead {
+    display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between;
+    gap: 20px; padding-bottom: 18px; border-bottom: 2px solid var(--ink);
+  }
+  .wordmark {
+    font-family: Newsreader, Georgia, serif;
+    font-size: clamp(38px, 6vw, 58px); font-weight: 600; line-height: .95;
+    letter-spacing: -.02em; margin: 0; text-wrap: balance;
+  }
+  .standfirst {
+    margin: 8px 0 0; max-width: 60ch; color: var(--ink-2); font-size: 15.5px;
+  }
+  .imprint {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 11px; letter-spacing: .08em; text-transform: uppercase;
+    color: var(--ink-3); text-align: right; line-height: 1.7;
+  }
+
+  .caution {
+    margin-top: 18px; padding: 12px 16px; border: 1px solid var(--hairline);
+    border-left: 3px solid var(--loss); background: var(--surface);
+    font-size: 13.5px; color: var(--ink-2); border-radius: 3px;
+  }
+  .caution b { color: var(--ink); font-weight: 600; }
+
+  /* ---------- layout ---------- */
+  .grid {
+    display: grid; grid-template-columns: 316px minmax(0, 1fr);
+    gap: 28px; margin-top: 28px; align-items: start;
+  }
+  @media (max-width: 900px) { .grid { grid-template-columns: 1fr; } }
+
+  /* Deliberately not sticky and deliberately not sized against the viewport.
+     This page is embedded in a host that measures the document to size its
+     frame, so a viewport-relative height here can feed back into that measure.
+     A rail that simply scrolls with the page is also the one layout that keeps
+     the reset and currency controls reachable at every window height. */
+  .rail { display: flex; flex-direction: column; gap: 16px; }
+
+  .panel {
+    background: var(--surface); border: 1px solid var(--hairline);
+    border-radius: 4px; box-shadow: var(--shadow);
+  }
+  .panel-head {
+    display: flex; align-items: baseline; justify-content: space-between; gap: 8px;
+    padding: 13px 18px; border-bottom: 1px solid var(--hairline-2);
+  }
+  .panel-title {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 10.5px; letter-spacing: .12em; text-transform: uppercase;
+    color: var(--ink-2); margin: 0; font-weight: 600;
+  }
+  .panel-body { padding: 16px 18px; }
+
+  /* ---------- controls ---------- */
+  .field { display: flex; flex-direction: column; gap: 5px; padding: 9px 0; }
+  .field + .field { border-top: 1px solid var(--hairline-2); }
+  .field-top { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; }
+  .field label { font-size: 13px; color: var(--ink-2); }
+  .field output {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 13px; font-weight: 600; color: var(--ink);
+    font-variant-numeric: tabular-nums;
+  }
+
+  input[type="range"] { -webkit-appearance: none; appearance: none; width: 100%; height: 18px; background: transparent; margin: 0; cursor: pointer; }
+  input[type="range"]::-webkit-slider-runnable-track { height: 3px; background: var(--hairline); border-radius: 2px; }
+  input[type="range"]::-moz-range-track { height: 3px; background: var(--hairline); border-radius: 2px; }
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none; appearance: none; width: 14px; height: 14px; margin-top: -5.5px;
+    border-radius: 50%; background: var(--accent); border: 2px solid var(--surface);
+    box-shadow: 0 0 0 1px var(--accent);
+  }
+  input[type="range"]::-moz-range-thumb {
+    width: 12px; height: 12px; border-radius: 50%; background: var(--accent);
+    border: 2px solid var(--surface); box-shadow: 0 0 0 1px var(--accent);
+  }
+  input[type="range"]:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 3px; }
+
+  .seg { display: flex; border: 1px solid var(--hairline); border-radius: 3px; overflow: hidden; }
+  .seg button {
+    flex: 1; padding: 6px 4px; border: 0; background: var(--surface); color: var(--ink-2);
+    font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 11px; font-weight: 600;
+    letter-spacing: .05em; cursor: pointer;
+  }
+  .seg button + button { border-left: 1px solid var(--hairline); }
+  .seg button[aria-pressed="true"] { background: var(--accent); color: #fff; }
+  .seg button:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+
+  .reset {
+    width: 100%; padding: 9px; border: 1px solid var(--hairline); border-radius: 3px;
+    background: var(--surface-2); color: var(--ink-2); cursor: pointer;
+    font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 11px;
+    letter-spacing: .08em; text-transform: uppercase; font-weight: 600;
+  }
+  .reset:hover { color: var(--ink); border-color: var(--ink-3); }
+  .reset:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  /* ---------- findings ---------- */
+  .findings { display: flex; flex-direction: column; gap: 20px; min-width: 0; }
+
+  .verdict { padding: 26px 28px 24px; }
+  .verdict-label {
+    font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 10.5px;
+    letter-spacing: .12em; text-transform: uppercase; color: var(--ink-2); margin: 0 0 6px;
+  }
+  .verdict-number {
+    font-family: Newsreader, Georgia, serif; font-size: clamp(64px, 11vw, 104px);
+    font-weight: 500; line-height: .88; letter-spacing: -.03em;
+    color: var(--loss); font-variant-numeric: tabular-nums; margin: 0;
+    transition: color .25s ease;
+  }
+  .verdict-read { margin: 12px 0 0; max-width: 54ch; color: var(--ink-2); font-size: 15px; }
+  .verdict-read b { color: var(--ink); font-weight: 600; }
+
+  .branch { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); border-top: 1px solid var(--hairline-2); }
+  .branch div { padding: 14px 18px; border-left: 1px solid var(--hairline-2); }
+  .branch div:first-child { border-left: 0; }
+  .branch dt {
+    font-size: 12px; color: var(--ink-2); margin: 0 0 3px; line-height: 1.35;
+  }
+  .branch dd {
+    margin: 0; font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 21px; font-weight: 500; font-variant-numeric: tabular-nums; letter-spacing: -.02em;
+  }
+
+  /* ---------- chart ---------- */
+  .chart-note { font-size: 13px; color: var(--ink-2); margin: 0 0 14px; max-width: 66ch; }
+  .plot { width: 100%; overflow-x: auto; }
+  svg { display: block; width: 100%; height: auto; }
+  .bar { transition: opacity .12s ease; }
+  .bar:hover { opacity: .72; }
+  .axis-text {
+    font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 10px;
+    fill: var(--ink-3); font-variant-numeric: tabular-nums;
+  }
+  .zero-label {
+    font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 10px;
+    fill: var(--ink-2); letter-spacing: .06em;
+  }
+
+  .legend { display: flex; flex-wrap: wrap; gap: 18px; margin: 14px 0 0; padding: 0; list-style: none; }
+  .legend li { display: flex; align-items: center; gap: 7px; font-size: 12.5px; color: var(--ink-2); }
+  .swatch { width: 11px; height: 11px; border-radius: 2px; flex: none; }
+
+  .deciles { width: 100%; border-collapse: collapse; margin-top: 16px; font-size: 13px; }
+  .deciles th, .deciles td { padding: 7px 10px; text-align: right; border-top: 1px solid var(--hairline-2); }
+  .deciles th:first-child, .deciles td:first-child { text-align: left; }
+  .deciles thead th {
+    font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 10px;
+    letter-spacing: .1em; text-transform: uppercase; color: var(--ink-3); border-top: 0; font-weight: 600;
+  }
+  .deciles td.num { font-family: "IBM Plex Mono", ui-monospace, monospace; font-variant-numeric: tabular-nums; }
+
+  .toggle-table {
+    background: none; border: 0; padding: 0; cursor: pointer; color: var(--accent);
+    font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 10.5px;
+    letter-spacing: .1em; text-transform: uppercase; font-weight: 600;
+  }
+  .toggle-table:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+  /* ---------- risk rows ---------- */
+  .risks { display: grid; grid-template-columns: repeat(auto-fit, minmax(215px, 1fr)); gap: 0; }
+  .risk { padding: 15px 18px; border-top: 1px solid var(--hairline-2); border-left: 1px solid var(--hairline-2); }
+  .risk:nth-child(-n+2) { border-top: 0; }
+  @media (max-width: 620px) { .risk { border-left: 0; } .risk:nth-child(2) { border-top: 1px solid var(--hairline-2); } }
+  .risk dt { font-size: 12.5px; color: var(--ink-2); margin: 0 0 4px; line-height: 1.4; }
+  .risk dd {
+    margin: 0; font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 19px;
+    font-weight: 500; font-variant-numeric: tabular-nums;
+  }
+
+  /* ---------- levers ---------- */
+  .lever { display: grid; grid-template-columns: 26px minmax(0,1fr) auto; gap: 14px; padding: 15px 18px; border-top: 1px solid var(--hairline-2); align-items: start; }
+  .lever:first-child { border-top: 0; }
+  .lever-rank {
+    font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 12px;
+    color: var(--ink-3); padding-top: 3px; font-variant-numeric: tabular-nums;
+  }
+  .lever-name { font-weight: 600; font-size: 14.5px; margin: 0; }
+  .lever-change { margin: 2px 0 0; font-size: 13px; color: var(--ink-2); }
+  .lever-cost { margin: 6px 0 0; font-size: 12.5px; color: var(--ink-3); max-width: 62ch; }
+  .lever-delta {
+    font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 15px; font-weight: 600;
+    text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; padding-top: 1px;
+  }
+  .lever-delta small { display: block; font-size: 10px; font-weight: 400; letter-spacing: .07em; text-transform: uppercase; color: var(--ink-3); margin-top: 2px; }
+  .good { color: var(--gain); }
+  .bad  { color: var(--loss); }
+
+  .progress { padding: 15px 18px; font-size: 13px; color: var(--ink-3); }
+
+  /* ---------- receipt ---------- */
+  .receipt {
+    background: var(--surface); border: 1px solid var(--ink-3);
+    border-radius: 4px; padding: 24px 26px;
+    font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 12px;
+    position: relative;
+  }
+  .receipt::before {
+    content: ""; position: absolute; inset: 5px; border: 1px solid var(--hairline);
+    pointer-events: none; border-radius: 2px;
+  }
+  .receipt h2 {
+    font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 11px;
+    letter-spacing: .18em; text-transform: uppercase; margin: 0 0 16px; font-weight: 600;
+  }
+  .rrow { display: flex; justify-content: space-between; gap: 16px; padding: 4px 0; }
+  .rrow span:first-child { color: var(--ink-2); }
+  .rrow span:last-child { font-variant-numeric: tabular-nums; text-align: right; overflow-wrap: anywhere; }
+  .rrule { border: 0; border-top: 1px dashed var(--hairline); margin: 14px 0; }
+  .stamp {
+    display: inline-block; margin-top: 14px; padding: 5px 11px;
+    border: 1.5px solid var(--loss); color: var(--loss); border-radius: 3px;
+    font-size: 10.5px; letter-spacing: .14em; font-weight: 600; text-transform: uppercase;
+  }
+  .receipt-foot { margin: 14px 0 0; color: var(--ink-3); font-size: 11px; line-height: 1.6; }
+
+  footer {
+    margin-top: 44px; padding-top: 20px; border-top: 1px solid var(--hairline);
+    font-size: 12.5px; color: var(--ink-3); max-width: 74ch;
+  }
+  footer a { color: var(--accent); }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; animation: none !important; }
+  }
+</style>
+
+<div class="wrap">
+
+  <header class="masthead">
+    <div>
+      <h1 class="wordmark">Downside</h1>
+      <p class="standfirst">
+        A degree abroad is not an average return. It is a branch: earn in dollars against a rupee
+        loan, or come home to a rupee salary still owing for a dollar-priced degree. This simulates
+        both and reports the shape.
+      </p>
+    </div>
+    <div class="imprint">
+      Monte&nbsp;Carlo<br>
+      India&nbsp;&rarr;&nbsp;United&nbsp;States<br>
+      MS&nbsp;Computer&nbsp;Science
+    </div>
+  </header>
+
+  <p class="caution">
+    <b>Uncalibrated.</b> Every input below is a placeholder prior, not ingested data. The model is
+    real and the mathematics is checked; the numbers are plausible but unsourced. Treat this as an
+    instrument being tested, not a forecast about anyone's life.
+  </p>
+
+  <div class="grid">
+
+    <!-- ============ assumptions rail ============ -->
+    <form class="rail" id="controls" autocomplete="off">
+      <section class="panel">
+        <div class="panel-head"><h2 class="panel-title">The money</h2></div>
+        <div class="panel-body" id="money-fields"></div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-head"><h2 class="panel-title">The odds</h2></div>
+        <div class="panel-body" id="odds-fields"></div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-head"><h2 class="panel-title">Loan currency</h2></div>
+        <div class="panel-body">
+          <div class="seg" role="group" aria-label="Loan currency">
+            <button type="button" id="ccy-inr" aria-pressed="true">RUPEE</button>
+            <button type="button" id="ccy-usd" aria-pressed="false">DOLLAR</button>
+          </div>
+          <p style="margin:10px 0 0;font-size:12.5px;color:var(--ink-3);line-height:1.5">
+            A dollar loan hedges the branch where you stay and worsens the one where you come home.
+            Which way it nets out depends on your odds, so watch the tail, not the rate.
+          </p>
+        </div>
+      </section>
+
+      <button type="button" class="reset" id="reset">Reset assumptions</button>
+    </form>
+
+    <!-- ============ findings ============ -->
+    <main class="findings">
+
+      <section class="panel">
+        <div class="verdict">
+          <p class="verdict-label">Probability you repay a dollar-priced degree on a rupee income</p>
+          <p class="verdict-number" id="hero">—</p>
+          <p class="verdict-read" id="hero-read">Simulating…</p>
+        </div>
+        <dl class="branch">
+          <div><dt>Receives any US offer</dt><dd id="s-offer">—</dd></div>
+          <div><dt>Clears sponsorship and the lottery</dt><dd id="s-visa">—</dd></div>
+          <div><dt>Ends up back in India</dt><dd id="s-home">—</dd></div>
+        </dl>
+      </section>
+
+      <section class="panel">
+        <div class="panel-head">
+          <h2 class="panel-title">Net position at year 7, against never having gone</h2>
+          <button class="toggle-table" id="toggle-table" aria-expanded="false">Table</button>
+        </div>
+        <div class="panel-body">
+          <p class="chart-note">
+            Real rupees, today's money, after the loan is settled and against the salary you would
+            have earned by staying. Everything left of the zero line is a life made materially worse
+            by the decision.
+          </p>
+          <div class="plot"><svg id="chart" viewBox="0 0 860 300" role="img" aria-labelledby="chart-desc"><desc id="chart-desc">Histogram of simulated net financial position at year seven relative to not studying abroad.</desc></svg></div>
+          <ul class="legend">
+            <li><span class="swatch" style="background:var(--loss)"></span> Worse off than staying</li>
+            <li><span class="swatch" style="background:var(--gain)"></span> Better off than staying</li>
+          </ul>
+          <div id="table-wrap" hidden></div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <dl class="risks">
+          <div class="risk"><dt>Worst decile at year 7</dt><dd id="s-tail">—</dd></div>
+          <div class="risk"><dt>Median at year 7</dt><dd id="s-median">—</dd></div>
+          <div class="risk"><dt>Still carrying the loan at 35</dt><dd id="s-35">—</dd></div>
+          <div class="risk"><dt>Never overtakes staying home</dt><dd id="s-never">—</dd></div>
+          <div class="risk"><dt>Sanctioned loan fails to cover the bill</dt><dd id="s-short">—</dd></div>
+          <div class="risk"><dt>Median break-even</dt><dd id="s-be">—</dd></div>
+        </dl>
+      </section>
+
+      <section class="panel">
+        <div class="panel-head">
+          <h2 class="panel-title">Levers, ranked by tail risk removed</h2>
+        </div>
+        <div id="levers"><p class="progress">Waiting for the baseline…</p></div>
+      </section>
+
+      <section class="receipt" id="receipt">
+        <h2>Decision Receipt</h2>
+        <div id="receipt-body"></div>
+      </section>
+
+      <footer>
+        Built on a zero-dependency Monte Carlo engine that carries the loan in its own currency,
+        charges family capital against the degree, and compares every path against not going at all.
+        Levers are evaluated with common random numbers, so the deltas are the lever and not
+        simulation noise. Known limitations — no green-card backlog, no post-hire unemployment, no
+        non-completion — all push the same way: the true left tail is fatter than what you see here.
+      </footer>
+
+    </main>
+  </div>
+</div>
+
+<script>
+(() => {
+  "use strict";
+
+  /* =====================================================================
+     ENGINE — a faithful port of src/engine/*.ts. Kept structurally
+     identical to the Node version so results agree path for path.
+     ===================================================================== */
+
+  function createRng(seed) {
+    let h = 0x811c9dc5;
+    for (let i = 0; i < seed.length; i++) {
+      h ^= seed.charCodeAt(i);
+      h = Math.imul(h, 0x01000193);
+    }
+    let state = h >>> 0;
+    let spare = null;
+    const next = () => {
+      state = (state + 0x6d2b79f5) >>> 0;
+      let t = state;
+      t = Math.imul(t ^ (t >>> 15), t | 1);
+      t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+    const normal = () => {
+      if (spare !== null) { const v = spare; spare = null; return v; }
+      let u = next(); while (u === 0) u = next();
+      const v = next();
+      const r = Math.sqrt(-2 * Math.log(u));
+      spare = r * Math.sin(2 * Math.PI * v);
+      return r * Math.cos(2 * Math.PI * v);
+    };
+    return { next, normal, bernoulli: (p) => next() < p };
+  }
+
+  function extrapolate(a, b, u) {
+    if (a.v <= 0 || b.v <= 0) {
+      const slope = (b.v - a.v) / (b.p - a.p);
+      return Math.max(0, a.v + slope * (u - a.p));
+    }
+    const slope = (Math.log(b.v) - Math.log(a.v)) / (b.p - a.p);
+    return Math.exp(Math.log(a.v) + slope * (u - a.p));
+  }
+
+  function sampleCurve(curve, rng) {
+    const pts = curve.points;
+    const first = pts[0];
+    if (pts.length === 1) return first.v;
+    const last = pts[pts.length - 1];
+    const u = rng.next();
+    if (u <= first.p) return extrapolate(first, pts[1], u);
+    if (u >= last.p) return extrapolate(pts[pts.length - 2], last, u);
+    for (let i = 1; i < pts.length; i++) {
+      const hi = pts[i];
+      if (u <= hi.p) {
+        const lo = pts[i - 1];
+        return lo.v + ((u - lo.p) / (hi.p - lo.p)) * (hi.v - lo.v);
+      }
+    }
+    return last.v;
+  }
+
+  function percentileSorted(sorted, p) {
+    if (sorted.length === 0) return NaN;
+    if (sorted.length === 1) return sorted[0];
+    const idx = p * (sorted.length - 1);
+    const lo = Math.floor(idx), hi = Math.ceil(idx);
+    return lo === hi ? sorted[lo] : sorted[lo] + (idx - lo) * (sorted[hi] - sorted[lo]);
+  }
+
+  function summarize(values) {
+    if (values.length === 0) return { p10: NaN, p50: NaN, p90: NaN };
+    const s = [...values].sort((a, b) => a - b);
+    return { p10: percentileSorted(s, .1), p50: percentileSorted(s, .5), p90: percentileSorted(s, .9) };
+  }
+
+  function fractionWhere(items, pred) {
+    if (items.length === 0) return 0;
+    let n = 0;
+    for (const it of items) if (pred(it)) n++;
+    return n / items.length;
+  }
+
+  function amortizingPayment(principal, monthlyRate, months) {
+    if (months <= 0) return principal;
+    if (monthlyRate <= 0) return principal / months;
+    const f = Math.pow(1 + monthlyRate, months);
+    return (principal * monthlyRate * f) / (f - 1);
+  }
+
+  const LOTTERY_MONTHS = [10, 22, 34];
+
+  /**
+   * Compound-growth factors, precomputed once per run. Each depends only on a
+   * month offset, never on what a path draws, so computing them inside the
+   * monthly loop cost several million redundant Math.pow calls and was enough
+   * to stall the first paint. Hoisting is exact, not approximate.
+   */
+  function growthTable(rate, months) {
+    const t = new Float64Array(months);
+    for (let m = 0; m < months; m++) t[m] = Math.pow(1 + rate, m / 12);
+    return t;
+  }
+
+  function buildGrowthTables(input, horizonMonths) {
+    const n = horizonMonths + 1;
+    return {
+      destPrice: growthTable(input.corridor.macro.destInflation, n),
+      homePrice: growthTable(input.corridor.macro.homeInflation, n),
+      escalation: growthTable(input.cost.realEscalation, n),
+      destWage: growthTable(input.program.realWageGrowthDest, n),
+      homeWage: growthTable(input.corridor.homeReturn.realGrowth, n),
+      counterfactual: growthTable(input.counterfactual.realGrowth, n),
+    };
+  }
+
+  function simulatePath(input, horizonMonths, rng, tables) {
+    const { corridor, program, cost, loan, assistantship, counterfactual } = input;
+    const { macro, immigration, homeReturn } = corridor;
+
+    const gradMonth = input.programMonths;
+    const amortStart = gradMonth + loan.moratoriumMonths;
+    const workAuthEnd = gradMonth + immigration.postStudyWorkMonths +
+      (immigration.stemEligible ? immigration.stemExtensionMonths : 0);
+    const graceMonths = Math.round(immigration.unemploymentGraceDays / 30);
+    const loanIsDest = loan.currency === corridor.destCurrency;
+
+    const hasAssistantship = rng.bernoulli(assistantship.probability);
+    const gotDestOffer = rng.bernoulli(program.pDestOffer);
+    const monthsToOffer = Math.min(graceMonths, Math.max(0, Math.round(sampleCurve(program.monthsToOffer, rng))));
+    const employmentStart = gradMonth + monthsToOffer;
+    const baseWageDest = sampleCurve(program.firstYearWage, rng);
+    const employerSponsors = rng.bernoulli(immigration.employerSponsorshipRate);
+    const homeSalaryBase = sampleCurve(homeReturn.baseSalary, rng) * homeReturn.foreignDegreePremium;
+
+    let visaSelected = false;
+    if (gotDestOffer && employerSponsors) {
+      for (const offset of LOTTERY_MONTHS) {
+        const m = gradMonth + offset;
+        if (m > workAuthEnd) break;
+        if (m < employmentStart) continue;
+        if (rng.bernoulli(immigration.lotterySelectionProbability)) { visaSelected = true; break; }
+      }
+    }
+
+    const everWorkedInDest = gotDestOffer;
+    let monthToReturnHome = null;
+    if (!everWorkedInDest) monthToReturnHome = gradMonth + graceMonths;
+    else if (!visaSelected) monthToReturnHome = workAuthEnd;
+
+    let fx = macro.fxSpot;
+    let familyPool = input.familyContribution;
+    let sanctionedRemaining = loan.sanctioned;
+    let outstanding = 0;
+    let blendedRate = loan.nominalRate / 12;
+    let fxShortfall = 0;
+    let principalDrawn = 0;
+    let emi = 0;
+    let monthsToPayoff = null;
+    let repaidFromHomeIncome = false;
+
+    let savings = -input.familyContribution;
+    let cfSavings = 0;
+
+    const netWorthByYear = [];
+    const counterfactualByYear = [];
+    let lastMonthBehind = -1;
+    let debtToIncome = 0;
+
+    for (let m = 0; m < horizonMonths; m++) {
+      const destPriceIndex = tables.destPrice[m];
+      const homePriceIndex = tables.homePrice[m];
+
+      if (m > 0) {
+        const drift = (macro.fxDrift - (macro.fxVol * macro.fxVol) / 2) / 12;
+        fx *= Math.exp(drift + (macro.fxVol / Math.sqrt(12)) * rng.normal());
+      }
+
+      const loanFx = loanIsDest ? fx : 1;
+      const returnedHome = monthToReturnHome !== null && m >= monthToReturnHome;
+
+      if (m < gradMonth) {
+        const escalation = tables.escalation[m] * destPriceIndex;
+        const tuition = (cost.tuitionPerYear / 12) * escalation *
+          (hasAssistantship ? 1 - assistantship.tuitionWaiverFraction : 1);
+        const living = cost.livingPerMonthStudy * escalation;
+        const stipend = hasAssistantship ? assistantship.annualStipend / 12 : 0;
+        const oneTime = m === 0 ? cost.oneTimeCosts : 0;
+
+        const needDest = Math.max(0, tuition + living + oneTime - stipend);
+        const needLoanCcy = loanIsDest ? needDest : needDest * fx;
+
+        const familyInLoanCcy = Math.max(0, familyPool) / loanFx;
+        const fromFamily = Math.min(needLoanCcy, familyInLoanCcy);
+        const afterFamily = needLoanCcy - fromFamily;
+        const drawn = Math.min(afterFamily, Math.max(0, sanctionedRemaining));
+        const topUp = Math.max(0, afterFamily - drawn);
+
+        familyPool -= fromFamily * loanFx;
+        sanctionedRemaining -= drawn;
+        if (topUp > 0) {
+          const topUpRate = (loan.nominalRate + loan.topUpRatePremium) / 12;
+          const total = outstanding + drawn + topUp;
+          blendedRate = total > 0 ? ((outstanding + drawn) * blendedRate + topUp * topUpRate) / total : blendedRate;
+          fxShortfall += topUp * loanFx;
+        }
+        outstanding += drawn + topUp;
+        principalDrawn += (drawn + topUp) * loanFx;
+      }
+
+      if (outstanding > 0) {
+        const interest = outstanding * blendedRate;
+        const serviceable = m < amortStart && loan.moratorium === "interest-serviced" &&
+          familyPool >= interest * loanFx;
+        if (serviceable) familyPool -= interest * loanFx;
+        else outstanding += interest;
+      }
+
+      let grossHome = 0;
+      if (returnedHome) {
+        const sinceReturn = m - monthToReturnHome;
+        if (sinceReturn >= homeReturn.monthsToOffer) {
+          const k = sinceReturn - homeReturn.monthsToOffer;
+          grossHome = (homeSalaryBase / 12) * tables.homeWage[k] * homePriceIndex;
+        }
+      } else if (m >= employmentStart && everWorkedInDest) {
+        const wageDest = (baseWageDest / 12) * tables.destWage[m - employmentStart] * destPriceIndex;
+        grossHome = wageDest * fx;
+      }
+
+      const taxRate = returnedHome ? macro.homeEffectiveTaxRate : macro.destEffectiveTaxRate;
+      const postTax = grossHome * (1 - taxRate);
+      const livingHome = returnedHome
+        ? (counterfactual.livingPerYear / 12) * homePriceIndex
+        : (m >= employmentStart && everWorkedInDest ? cost.livingPerMonthWorking * destPriceIndex * fx : 0);
+
+      if (m === amortStart && outstanding > 0) {
+        emi = amortizingPayment(outstanding, blendedRate, loan.tenureMonths);
+        const annualPostTax = postTax * 12;
+        debtToIncome = annualPostTax > 0 ? (outstanding * loanFx) / annualPostTax : 99;
+      }
+
+      let surplus = postTax - livingHome;
+      if (m >= amortStart && outstanding > 0) {
+        if (returnedHome) repaidFromHomeIncome = true;
+        const due = Math.min(emi, outstanding);
+        const affordable = Math.max(0, surplus) / loanFx;
+        const paid = Math.min(due, affordable);
+        outstanding -= paid;
+        surplus -= paid * loanFx;
+        if (outstanding > 0 && surplus > 0 && input.prepaymentAggressiveness > 0) {
+          const prepay = Math.min(outstanding, (surplus * input.prepaymentAggressiveness) / loanFx);
+          outstanding -= prepay;
+          surplus -= prepay * loanFx;
+        }
+        if (outstanding <= 0.01) { outstanding = 0; if (monthsToPayoff === null) monthsToPayoff = m; }
+      }
+      savings += surplus;
+
+      const cfGross = (counterfactual.startingSalary / 12) *
+        tables.counterfactual[m] * homePriceIndex;
+      cfSavings += cfGross * (1 - macro.homeEffectiveTaxRate) -
+        (counterfactual.livingPerYear / 12) * homePriceIndex;
+
+      const realNetWorth = (savings - outstanding * loanFx) / homePriceIndex;
+      const realCf = cfSavings / homePriceIndex;
+      if (realNetWorth < realCf) lastMonthBehind = m;
+      if ((m + 1) % 12 === 0) { netWorthByYear.push(realNetWorth); counterfactualByYear.push(realCf); }
+    }
+
+    return {
+      gotDestJob: everWorkedInDest, visaSelected,
+      returnedHome: monthToReturnHome !== null,
+      principalDrawn, fxShortfall, monthsToPayoff, repaidFromHomeIncome, debtToIncome,
+      breakEvenMonth: lastMonthBehind + 1 < horizonMonths ? lastMonthBehind + 1 : null,
+      netWorthByYear, counterfactualByYear,
+    };
+  }
+
+  function simulate(input, config) {
+    const rng = createRng(config.seed);
+    const tables = buildGrowthTables(input, config.horizonMonths);
+    const outcomes = new Array(config.paths);
+    for (let i = 0; i < config.paths; i++) outcomes[i] = simulatePath(input, config.horizonMonths, rng, tables);
+
+    const nw7 = outcomes.map((o) => o.netWorthByYear[6]);
+    const delta7 = outcomes.map((o) => o.netWorthByYear[6] - o.counterfactualByYear[6]);
+    const breakEven = outcomes.map((o) => o.breakEvenMonth).filter((m) => m !== null);
+
+    const result = {
+      paths: outcomes.length,
+      pDestJob: fractionWhere(outcomes, (o) => o.gotDestJob),
+      pVisaSelected: fractionWhere(outcomes, (o) => o.visaSelected),
+      pReturnHome: fractionWhere(outcomes, (o) => o.returnedHome),
+      pRepayFromHomeIncome: fractionWhere(outcomes, (o) => o.repaidFromHomeIncome),
+      pStillRepayingAt35: fractionWhere(outcomes, (o) => {
+        if (o.principalDrawn <= 0) return false;
+        if (o.monthsToPayoff === null) return true;
+        return input.ageAtStart + o.monthsToPayoff / 12 > 35;
+      }),
+      pNeverBreakEven: fractionWhere(outcomes, (o) => o.breakEvenMonth === null),
+      pFxShortfall: fractionWhere(outcomes, (o) => o.fxShortfall > 0),
+      breakEvenMonth: summarize(breakEven),
+      netWorthYear7: summarize(nw7),
+      tailCostYear7: percentileSorted([...nw7].sort((a, b) => a - b), 0.1),
+      delta7,
+    };
+    return result;
+  }
+
+  /* ---------- levers ---------- */
+  const clone = (o) => structuredClone(o);
+
+  const LEVERS = [
+    { id: "assistantship", label: "Chase funding harder than ranking",
+      change: "Assistantship odds raised to 3-in-4",
+      cost: "Target programs by funding density and contact labs before applying. No student can move this to certainty, which is why the lever stops at 0.75.",
+      apply: (i) => { if (i.assistantship.probability >= .75) return null; const n = clone(i); n.assistantship.probability = .75; return n; } },
+    { id: "cheaper-metro", label: "Study in a lower-cost metro",
+      change: "Living costs cut by a quarter, in study and in work",
+      cost: "A smaller city, a thinner local employer network, and more relocation risk after graduation.",
+      apply: (i) => { const n = clone(i); n.cost.livingPerMonthStudy *= .75; n.cost.livingPerMonthWorking *= .8; return n; } },
+    { id: "collateralized", label: "Pledge collateral on the loan",
+      change: "Interest rate down 250 basis points",
+      cost: "Family property or deposits at risk if the loan is not serviced. This moves risk onto the co-signer, it does not delete it.",
+      apply: (i) => { const n = clone(i); n.loan.nominalRate = Math.max(.05, n.loan.nominalRate - .025); return n; } },
+    { id: "currency-match", label: "Borrow in the destination currency",
+      change: "Loan redenominated to dollars at a higher headline rate",
+      cost: "The rate is higher and the currency exposure inverts: cheaper if you stay, more expensive if you come home.",
+      apply: (i) => { if (i.loan.currency === i.corridor.destCurrency) return null; const n = clone(i);
+        n.loan.sanctioned = i.loan.sanctioned / i.corridor.macro.fxSpot; n.loan.currency = i.corridor.destCurrency;
+        n.loan.nominalRate = i.loan.nominalRate + .015; return n; } },
+    { id: "longer-tenure", label: "Stretch the repayment tenure",
+      change: "Tenure extended from 10 to 15 years",
+      cost: "Materially more total interest. This buys survivability in the bad branch, not a better outcome in the good one.",
+      apply: (i) => { if (i.loan.tenureMonths >= 180) return null; const n = clone(i); n.loan.tenureMonths = 180; return n; } },
+    { id: "service-interest", label: "Service interest during study",
+      change: "Family pays interest monthly instead of letting it capitalize",
+      cost: "Real cash out of the household budget for three years, at the point when there is no income to pay it from.",
+      apply: (i) => { if (i.loan.moratorium === "interest-serviced") return null; const n = clone(i); n.loan.moratorium = "interest-serviced"; return n; } },
+    { id: "defer", label: "Work one more year, then go",
+      change: "One extra year of home earnings added to the family contribution",
+      cost: "A year of foregone destination earnings, and a year older into the visa timeline.",
+      apply: (i) => { const n = clone(i);
+        const saved = i.counterfactual.startingSalary * (1 - i.corridor.macro.homeEffectiveTaxRate) - i.counterfactual.livingPerYear;
+        n.familyContribution += Math.max(0, saved); n.ageAtStart += 1; return n; } },
+    { id: "employability", label: "Choose a program with a denser employer graph",
+      change: "Probability of any US offer up 8 points",
+      cost: "Usually a higher sticker price or a harder admit. Verify the claim against filings, not the placement brochure.",
+      apply: (i) => { if (i.program.pDestOffer >= .95) return null; const n = clone(i);
+        n.program.pDestOffer = Math.min(.95, n.program.pDestOffer + .08); return n; } },
+  ];
+
+  /* =====================================================================
+     REFERENCE SCENARIO — placeholder priors, mirrors src/data/corridors
+     ===================================================================== */
+
+  const REFERENCE = {
+    corridor: {
+      homeCurrency: "INR", destCurrency: "USD",
+      macro: { fxSpot: 88, fxDrift: .03, fxVol: .06, homeInflation: .05, destInflation: .025,
+        destEffectiveTaxRate: .28, homeEffectiveTaxRate: .20 },
+      immigration: { postStudyWorkMonths: 12, stemExtensionMonths: 24, stemEligible: true,
+        lotterySelectionProbability: .28, employerSponsorshipRate: .55, unemploymentGraceDays: 150 },
+      homeReturn: {
+        baseSalary: { points: [{p:.1,v:900000},{p:.25,v:1300000},{p:.5,v:1800000},{p:.75,v:2600000},{p:.9,v:3800000}] },
+        foreignDegreePremium: 1.15, monthsToOffer: 3, realGrowth: .06 },
+    },
+    program: {
+      firstYearWage: { points: [{p:.1,v:78000},{p:.25,v:95000},{p:.5,v:115000},{p:.75,v:140000},{p:.9,v:175000}] },
+      pDestOffer: .72,
+      monthsToOffer: { points: [{p:.1,v:0},{p:.25,v:1},{p:.5,v:3},{p:.75,v:6},{p:.9,v:10}] },
+      realWageGrowthDest: .04,
+    },
+    cost: { tuitionPerYear: 30000, livingPerMonthStudy: 1400, livingPerMonthWorking: 2600,
+      oneTimeCosts: 4500, realEscalation: .02 },
+    loan: { sanctioned: 6200000, currency: "INR", nominalRate: .1125, moratoriumMonths: 12,
+      tenureMonths: 120, moratorium: "capitalized", topUpRatePremium: .03 },
+    assistantship: { probability: .25, annualStipend: 22000, tuitionWaiverFraction: .9 },
+    counterfactual: { startingSalary: 1200000, realGrowth: .07, livingPerYear: 480000 },
+    programMonths: 21, ageAtStart: 23, familyContribution: 1500000, prepaymentAggressiveness: .5,
+  };
+
+  const CONFIG = { paths: 5000, horizonMonths: 180, seed: "downside-v1" };
+  const LEVER_CONFIG = { paths: 3500, horizonMonths: 180, seed: "downside-v1" };
+
+  /* =====================================================================
+     FORMATTING
+     ===================================================================== */
+
+  const inr = (v) => {
+    if (!isFinite(v)) return "n/a";
+    const sign = v < 0 ? "−" : "";
+    const a = Math.abs(v);
+    if (a >= 1e7) return sign + "₹" + (a / 1e7).toFixed(2) + " Cr";
+    if (a >= 1e5) return sign + "₹" + (a / 1e5).toFixed(1) + " L";
+    if (a >= 1e3) return sign + "₹" + Math.round(a / 1e3) + "k";
+    return sign + "₹" + Math.round(a);
+  };
+  const inrShort = (v) => {
+    if (!isFinite(v)) return "";
+    const sign = v < 0 ? "−" : "";
+    const a = Math.abs(v);
+    if (a >= 1e7) return sign + (a / 1e7).toFixed(1) + "Cr";
+    if (a >= 1e5) return sign + Math.round(a / 1e5) + "L";
+    return sign + Math.round(a / 1e3) + "k";
+  };
+  const pct = (v, d = 1) => isFinite(v) ? (v * 100).toFixed(d) + "%" : "n/a";
+  const mos = (v) => {
+    if (!isFinite(v)) return "never";
+    const y = Math.floor(v / 12), m = Math.round(v % 12);
+    if (y === 0) return m + "mo";
+    return m === 0 ? y + "y" : y + "y " + m + "mo";
+  };
+
+  /* =====================================================================
+     STATE + CONTROLS
+     ===================================================================== */
+
+  const SPECS = [
+    { group: "money", key: "loan",     label: "Sanctioned loan",      min: 1000000, max: 15000000, step: 100000, fmt: inr,
+      get: (s) => s.loan.sanctioned,               set: (s, v) => { s.loan.sanctioned = v; } },
+    { group: "money", key: "rate",     label: "Interest rate",        min: .06, max: .16, step: .0025, fmt: (v) => pct(v, 2),
+      get: (s) => s.loan.nominalRate,              set: (s, v) => { s.loan.nominalRate = v; } },
+    { group: "money", key: "tuition",  label: "Tuition per year",     min: 8000, max: 75000, step: 1000, fmt: (v) => "$" + v.toLocaleString("en-US"),
+      get: (s) => s.cost.tuitionPerYear,           set: (s, v) => { s.cost.tuitionPerYear = v; } },
+    { group: "money", key: "living",   label: "Living cost, monthly", min: 700, max: 3500, step: 50, fmt: (v) => "$" + v.toLocaleString("en-US"),
+      get: (s) => s.cost.livingPerMonthStudy,      set: (s, v) => { s.cost.livingPerMonthStudy = v; } },
+    { group: "money", key: "family",   label: "Family contribution",  min: 0, max: 8000000, step: 100000, fmt: inr,
+      get: (s) => s.familyContribution,            set: (s, v) => { s.familyContribution = v; } },
+    { group: "money", key: "cf",       label: "Salary if you stay",   min: 400000, max: 5000000, step: 50000, fmt: inr,
+      get: (s) => s.counterfactual.startingSalary, set: (s, v) => { s.counterfactual.startingSalary = v; } },
+
+    { group: "odds", key: "offer",   label: "Lands a US offer",       min: .2, max: .98, step: .01, fmt: (v) => pct(v, 0),
+      get: (s) => s.program.pDestOffer,            set: (s, v) => { s.program.pDestOffer = v; } },
+    { group: "odds", key: "sponsor", label: "Employer will sponsor",  min: .1, max: .95, step: .01, fmt: (v) => pct(v, 0),
+      get: (s) => s.corridor.immigration.employerSponsorshipRate, set: (s, v) => { s.corridor.immigration.employerSponsorshipRate = v; } },
+    { group: "odds", key: "lottery", label: "Lottery selection rate", min: .05, max: .7, step: .01, fmt: (v) => pct(v, 0),
+      get: (s) => s.corridor.immigration.lotterySelectionProbability, set: (s, v) => { s.corridor.immigration.lotterySelectionProbability = v; } },
+    { group: "odds", key: "asst",    label: "Assistantship odds",     min: 0, max: 1, step: .01, fmt: (v) => pct(v, 0),
+      get: (s) => s.assistantship.probability,     set: (s, v) => { s.assistantship.probability = v; } },
+    { group: "odds", key: "fxdrift", label: "Rupee depreciation p.a.", min: 0, max: .08, step: .0025, fmt: (v) => pct(v, 2),
+      get: (s) => s.corridor.macro.fxDrift,        set: (s, v) => { s.corridor.macro.fxDrift = v; } },
+  ];
+
+  let state = structuredClone(REFERENCE);
+  const inputs = new Map();
+
+  function buildControls() {
+    for (const spec of SPECS) {
+      const host = document.getElementById(spec.group + "-fields");
+      const field = document.createElement("div");
+      field.className = "field";
+      const id = "in-" + spec.key;
+      field.innerHTML =
+        '<div class="field-top"><label for="' + id + '">' + spec.label + '</label>' +
+        '<output id="out-' + spec.key + '"></output></div>' +
+        '<input type="range" id="' + id + '" min="' + spec.min + '" max="' + spec.max +
+        '" step="' + spec.step + '">';
+      host.appendChild(field);
+      const el = field.querySelector("input");
+      inputs.set(spec.key, el);
+      el.addEventListener("input", () => {
+        spec.set(state, Number(el.value));
+        document.getElementById("out-" + spec.key).textContent = spec.fmt(Number(el.value));
+        schedule();
+      });
+    }
+    syncControls();
+  }
+
+  function syncControls() {
+    for (const spec of SPECS) {
+      const v = spec.get(state);
+      inputs.get(spec.key).value = v;
+      document.getElementById("out-" + spec.key).textContent = spec.fmt(v);
+    }
+    const isInr = state.loan.currency === "INR";
+    document.getElementById("ccy-inr").setAttribute("aria-pressed", String(isInr));
+    document.getElementById("ccy-usd").setAttribute("aria-pressed", String(!isInr));
+    inputs.get("loan").disabled = false;
+  }
+
+  /* =====================================================================
+     CHART
+     ===================================================================== */
+
+  const BINS = 26;
+
+  function drawChart(delta) {
+    const svg = document.getElementById("chart");
+    // padT leaves a clear band above the tallest bar for the zero-line label,
+    // which otherwise sits on top of the densest part of the distribution.
+    const W = 860, H = 316, padL = 8, padR = 8, padT = 30, padB = 34;
+
+    const finite = delta.filter((v) => isFinite(v));
+    const sorted = [...finite].sort((a, b) => a - b);
+    // Trim the extreme 1% each side so a handful of outliers cannot flatten
+    // the body of the distribution into a single unreadable column.
+    const lo = percentileSorted(sorted, .01), hi = percentileSorted(sorted, .99);
+    const span = (hi - lo) || 1;
+    const counts = new Array(BINS).fill(0);
+    for (const v of finite) {
+      const idx = Math.min(BINS - 1, Math.max(0, Math.floor(((v - lo) / span) * BINS)));
+      counts[idx]++;
+    }
+    const peak = Math.max(...counts, 1);
+    const plotW = W - padL - padR, plotH = H - padT - padB;
+    const bw = plotW / BINS;
+    const xOf = (v) => padL + ((v - lo) / span) * plotW;
+
+    let out = "";
+    // baseline
+    out += '<line x1="' + padL + '" y1="' + (padT + plotH) + '" x2="' + (W - padR) +
+           '" y2="' + (padT + plotH) + '" stroke="var(--hairline)" stroke-width="1"/>';
+
+    // bars
+    for (let i = 0; i < BINS; i++) {
+      const c = counts[i];
+      if (c === 0) continue;
+      const h = Math.max(2, (c / peak) * plotH);
+      const x = padL + i * bw + 1;
+      const w = Math.max(1, bw - 2);
+      const y = padT + plotH - h;
+      const binLo = lo + (span * i) / BINS;
+      const binHi = lo + (span * (i + 1)) / BINS;
+      const fill = binHi <= 0 ? "var(--loss)" : (binLo >= 0 ? "var(--gain)" : "var(--mid)");
+      const share = ((c / finite.length) * 100).toFixed(1);
+      const r = Math.min(4, w / 2, h);
+      out += '<path class="bar" fill="' + fill + '" d="' +
+        'M' + x + ' ' + (padT + plotH) +
+        ' L' + x + ' ' + (y + r) +
+        ' Q' + x + ' ' + y + ' ' + (x + r) + ' ' + y +
+        ' L' + (x + w - r) + ' ' + y +
+        ' Q' + (x + w) + ' ' + y + ' ' + (x + w) + ' ' + (y + r) +
+        ' L' + (x + w) + ' ' + (padT + plotH) + ' Z">' +
+        '<title>' + inr(binLo) + " to " + inr(binHi) + " · " + share + '% of paths</title></path>';
+    }
+
+    // zero line
+    if (lo < 0 && hi > 0) {
+      const zx = xOf(0);
+      out += '<line x1="' + zx + '" y1="' + (padT - 12) + '" x2="' + zx + '" y2="' + (padT + plotH + 4) +
+             '" stroke="var(--ink)" stroke-width="1.5"/>';
+      // Anchor the label on whichever side of the line has room, so it never
+      // runs off the plot when the distribution sits mostly to one side.
+      const nearRight = zx > W - 220;
+      out += '<text class="zero-label" x="' + (nearRight ? zx - 7 : zx + 7) + '" y="' + (padT - 15) +
+             '" text-anchor="' + (nearRight ? "end" : "start") + '">NO BETTER THAN STAYING</text>';
+    }
+
+    // axis ticks
+    for (let t = 0; t <= 4; t++) {
+      const v = lo + (span * t) / 4;
+      const x = xOf(v);
+      const anchor = t === 0 ? "start" : (t === 4 ? "end" : "middle");
+      out += '<text class="axis-text" x="' + x + '" y="' + (H - 14) + '" text-anchor="' + anchor + '">' +
+             inrShort(v) + '</text>';
+    }
+    out += '<text class="axis-text" x="' + padL + '" y="' + (H - 2) + '" text-anchor="start">worse off ←</text>';
+    out += '<text class="axis-text" x="' + (W - padR) + '" y="' + (H - 2) + '" text-anchor="end">→ better off</text>';
+
+    svg.innerHTML = '<desc id="chart-desc">Histogram of simulated net financial position at year seven relative to not studying abroad.</desc>' + out;
+  }
+
+  function drawTable(delta) {
+    const sorted = delta.filter(isFinite).sort((a, b) => a - b);
+    const rows = [.05, .1, .25, .5, .75, .9, .95].map((p) =>
+      '<tr><td>' + (p * 100).toFixed(0) + 'th percentile</td><td class="num">' +
+      inr(percentileSorted(sorted, p)) + '</td></tr>').join("");
+    document.getElementById("table-wrap").innerHTML =
+      '<table class="deciles"><thead><tr><th>Percentile of simulated lives</th>' +
+      '<th>Net position at year 7 vs staying</th></tr></thead><tbody>' + rows + '</tbody></table>';
+  }
+
+  /* =====================================================================
+     RENDER
+     ===================================================================== */
+
+  function readingFor(p) {
+    if (p >= .5) return "More likely than not. In most simulated lives you are back in India servicing a debt that was sized in dollars, on a salary that is not.";
+    if (p >= .35) return "Close to half of all simulated lives end with a rupee income against a dollar-priced debt. This is the number the decision should turn on.";
+    if (p >= .2) return "Roughly one life in four ends back home still carrying the debt. A minority of paths, but nowhere near a remote one.";
+    if (p >= .1) return "A real minority of paths, but not a remote one. This is the branch to plan for, not the one to hope away.";
+    if (p > 0) return "The tail is thin under these assumptions. Check that the odds you set are ones you can actually defend.";
+    return "No borrowing, so no repayment risk. The remaining question is whether the family capital was worth spending.";
+  }
+
+  function render(result) {
+    const hero = document.getElementById("hero");
+    hero.textContent = pct(result.pRepayFromHomeIncome, 0);
+    hero.style.color = result.pRepayFromHomeIncome >= .3 ? "var(--loss)"
+      : (result.pRepayFromHomeIncome >= .12 ? "var(--ink)" : "var(--gain)");
+    document.getElementById("hero-read").textContent = readingFor(result.pRepayFromHomeIncome);
+
+    document.getElementById("s-offer").textContent  = pct(result.pDestJob, 0);
+    document.getElementById("s-visa").textContent   = pct(result.pVisaSelected, 0);
+    document.getElementById("s-home").textContent   = pct(result.pReturnHome, 0);
+
+    const tail = document.getElementById("s-tail");
+    tail.textContent = inr(result.tailCostYear7);
+    tail.className = result.tailCostYear7 < 0 ? "bad" : "";
+    const med = document.getElementById("s-median");
+    med.textContent = inr(result.netWorthYear7.p50);
+    med.className = result.netWorthYear7.p50 < 0 ? "bad" : "good";
+
+    document.getElementById("s-35").textContent    = pct(result.pStillRepayingAt35, 0);
+    document.getElementById("s-never").textContent = pct(result.pNeverBreakEven, 0);
+    document.getElementById("s-short").textContent = pct(result.pFxShortfall, 0);
+    document.getElementById("s-be").textContent    = mos(result.breakEvenMonth.p50);
+
+    drawChart(result.delta7);
+    drawTable(result.delta7);
+  }
+
+  function renderLevers(levers, done) {
+    const host = document.getElementById("levers");
+    if (levers.length === 0 && !done) { host.innerHTML = '<p class="progress">Re-running the model against each change…</p>'; return; }
+    let html = levers.map((l, i) => {
+      const pts = -l.deltaP * 100;
+      const cls = pts > 0.05 ? "good" : (pts < -0.05 ? "bad" : "");
+      const sign = pts > 0 ? "−" : (pts < 0 ? "+" : "±");
+      return '<div class="lever">' +
+        '<div class="lever-rank">' + (i + 1) + '</div>' +
+        '<div><p class="lever-name">' + l.label + '</p>' +
+        '<p class="lever-change">' + l.change + '</p>' +
+        '<p class="lever-cost">' + l.cost + '</p></div>' +
+        '<div class="lever-delta ' + cls + '">' + sign + Math.abs(pts).toFixed(1) + '<small>tail pts</small></div>' +
+        '</div>';
+    }).join("");
+    if (!done) html += '<p class="progress">' + levers.length + ' of ' + LEVERS.length + ' evaluated…</p>';
+    host.innerHTML = html;
+  }
+
+  /** Deterministic JSON: keys sorted at every level, matching the Node engine. */
+  function canonicalJson(value) {
+    if (value === null || typeof value !== "object") return JSON.stringify(value) ?? "null";
+    if (Array.isArray(value)) return "[" + value.map(canonicalJson).join(",") + "]";
+    return "{" + Object.entries(value)
+      .filter(([, v]) => v !== undefined)
+      .sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0))
+      .map(([k, v]) => JSON.stringify(k) + ":" + canonicalJson(v))
+      .join(",") + "}";
+  }
+
+  async function renderReceipt(result) {
+    const canonical = canonicalJson({ engine: "downside-engine/0.1.0", input: state, config: CONFIG });
+    const bytes = new TextEncoder().encode(canonical);
+    let hash = "unavailable-in-this-context";
+    try {
+      const digest = await crypto.subtle.digest("SHA-256", bytes);
+      hash = [...new Uint8Array(digest)].map((b) => b.toString(16).padStart(2, "0")).join("");
+    } catch (e) { /* insecure context: the receipt still renders, unhashed */ }
+
+    const rows = [
+      ["Issued", new Date().toISOString().replace("T", " ").slice(0, 19) + "Z"],
+      ["Engine", "downside-engine/0.1.0"],
+      ["Seed", CONFIG.seed + " · " + result.paths.toLocaleString("en-US") + " paths · 15y"],
+      ["Assumption hash", hash.slice(0, 32)],
+    ];
+    const findings = [
+      ["Repay a dollar degree on a rupee income", pct(result.pRepayFromHomeIncome)],
+      ["Still repaying at 35", pct(result.pStillRepayingAt35)],
+      ["Never beats staying home", pct(result.pNeverBreakEven)],
+      ["Median break-even", mos(result.breakEvenMonth.p50)],
+      ["Worst-decile position at year 7", inr(result.tailCostYear7)],
+    ];
+    const row = (r) => '<div class="rrow"><span>' + r[0] + '</span><span>' + r[1] + '</span></div>';
+    document.getElementById("receipt-body").innerHTML =
+      rows.map(row).join("") + '<hr class="rrule">' + findings.map(row).join("") +
+      '<div class="stamp">Uncalibrated · placeholder priors</div>' +
+      '<p class="receipt-foot">Same seed, same assumptions, same numbers — forever. Change one ' +
+      'assumption and the hash moves, which is what makes this a record rather than a screenshot. ' +
+      'Every input traces to a source; while any of them is a prior, this stamp stays on.</p>';
+  }
+
+  /* =====================================================================
+     ORCHESTRATION
+     ===================================================================== */
+
+  let runToken = 0;
+  let leverTimer = 0;
+
+  function schedule() {
+    clearTimeout(leverTimer);
+    const token = ++runToken;
+    // setTimeout rather than requestAnimationFrame: rAF callbacks do not fire
+    // while a frame is hidden or throttled, which would leave this page showing
+    // its markup and never its numbers. A timer always runs, and yielding first
+    // means the static layout paints before any simulation starts.
+    setTimeout(() => {
+      if (token !== runToken) return;
+      const result = simulate(state, CONFIG);
+      render(result);
+      renderReceipt(result);
+      renderLevers([], false);
+      // Levers wait for the user to stop dragging, then stream in one by one.
+      leverTimer = setTimeout(() => runLevers(token), 380);
+    }, 0);
+  }
+
+  function runLevers(token) {
+    // Levers run at a lower path count than the headline figure, so the
+    // baseline they are measured against must run at that same count and the
+    // same seed. Comparing across different path budgets would fold Monte Carlo
+    // noise into every delta and scramble the ranking.
+    const baseline = simulate(state, LEVER_CONFIG);
+    const found = [];
+    let i = 0;
+
+    const step = () => {
+      if (token !== runToken) return;
+      while (i < LEVERS.length) {
+        const def = LEVERS[i++];
+        const modified = def.apply(state);
+        if (modified === null) continue;
+        const r = simulate(modified, LEVER_CONFIG);
+        found.push({
+          label: def.label, change: def.change, cost: def.cost,
+          deltaP: r.pRepayFromHomeIncome - baseline.pRepayFromHomeIncome,
+        });
+        found.sort((a, b) => a.deltaP - b.deltaP);
+        renderLevers(found, i >= LEVERS.length);
+        setTimeout(step, 0);
+        return;
+      }
+      renderLevers(found, true);
+    };
+    step();
+  }
+
+  /* ---------- wiring ---------- */
+  document.getElementById("ccy-inr").addEventListener("click", () => {
+    if (state.loan.currency === "INR") return;
+    state.loan.sanctioned = state.loan.sanctioned * state.corridor.macro.fxSpot;
+    state.loan.currency = "INR";
+    syncControls(); schedule();
+  });
+  document.getElementById("ccy-usd").addEventListener("click", () => {
+    if (state.loan.currency === "USD") return;
+    state.loan.sanctioned = state.loan.sanctioned / state.corridor.macro.fxSpot;
+    state.loan.currency = "USD";
+    syncControls(); schedule();
+  });
+
+  document.getElementById("reset").addEventListener("click", () => {
+    state = structuredClone(REFERENCE);
+    syncControls(); schedule();
+  });
+
+  const toggle = document.getElementById("toggle-table");
+  toggle.addEventListener("click", () => {
+    const wrap = document.getElementById("table-wrap");
+    const open = wrap.hidden;
+    wrap.hidden = !open;
+    toggle.setAttribute("aria-expanded", String(open));
+    toggle.textContent = open ? "Hide table" : "Table";
+  });
+
+  buildControls();
+  schedule();
+})();
+</script>

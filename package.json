@@ -1,0 +1,19 @@
+{
+  "name": "downside",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Probabilistic outcome engine for cross-border education debt. Returns a distribution, not a number.",
+  "type": "module",
+  "engines": {
+    "node": ">=22.18"
+  },
+  "scripts": {
+    "sim": "node src/cli.ts",
+    "test": "node --test \"test/*.test.ts\"",
+    "typecheck": "npx --yes typescript@5.6.3 --noEmit -p tsconfig.json"
+  },
+  "devDependencies": {
+    "@types/node": "^22.20.1",
+    "typescript": "^5.6.3"
+  }
+}

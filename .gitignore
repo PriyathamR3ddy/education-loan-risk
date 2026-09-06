@@ -1,0 +1,21 @@
+# Dev-only dependencies. The engine, CLI and UI all run with zero packages
+# installed; node_modules exists purely so tsc can typecheck.
+node_modules/
+
+# Ingested source data. These are large government exports, they are not ours to
+# redistribute, and they are reproducible by re-running the ingesters.
+data/raw/
+*.xlsx
+*.csv
+!test/**/*.csv
+
+# Generated curves. Committed only once they are reviewed and promoted into
+# src/data/corridors/.
+src/data/generated/
+
+# Editor and OS noise
+.DS_Store
+Thumbs.db
+*.log
+.idea/
+.vscode/
