@@ -95,6 +95,83 @@
   }
   .caution b { color: var(--ink); font-weight: 600; }
 
+  /* ---------- stage switch ---------- */
+  .stages { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 18px; }
+  @media (max-width: 620px) { .stages { grid-template-columns: 1fr; } }
+  .stages button {
+    display: flex; flex-direction: column; gap: 3px; text-align: left; cursor: pointer;
+    padding: 13px 16px; border: 1px solid var(--hairline); border-radius: 4px;
+    background: var(--surface); color: var(--ink-2); font-family: inherit;
+    border-left: 3px solid var(--hairline);
+  }
+  .stages button:hover { border-color: var(--ink-3); }
+  .stages button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .stages button[aria-selected="true"] {
+    border-color: var(--hairline); border-left-color: var(--accent);
+    background: var(--surface); color: var(--ink);
+  }
+  .stage-when {
+    font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 10.5px;
+    letter-spacing: .12em; text-transform: uppercase; color: var(--ink-3); font-weight: 600;
+  }
+  .stages button[aria-selected="true"] .stage-when { color: var(--accent); }
+  .stage-q { font-size: 14.5px; font-weight: 500; }
+
+  /* ---------- runway vs clock ---------- */
+  .clock { display: flex; flex-direction: column; gap: 12px; }
+  .clock-row { display: grid; grid-template-columns: 128px 1fr auto; gap: 12px; align-items: center; }
+  .clock-label { font-size: 13px; color: var(--ink-2); }
+  .clock-track { position: relative; height: 16px; background: var(--surface-2); border-radius: 3px; overflow: hidden; }
+  .clock-fill { position: absolute; inset: 0 auto 0 0; border-radius: 3px; }
+  .clock-value {
+    font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 14px; font-weight: 600;
+    font-variant-numeric: tabular-nums; min-width: 74px; text-align: right;
+  }
+  .clock-verdict { margin: 4px 0 0; font-size: 14px; }
+  .clock-verdict b { font-weight: 600; }
+
+  .frontier { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .frontier th, .frontier td { padding: 8px 10px; text-align: right; border-top: 1px solid var(--hairline-2); }
+  .frontier th:first-child, .frontier td:first-child { text-align: left; }
+  .frontier thead th {
+    font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 10px;
+    letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3);
+    border-top: 0; font-weight: 600;
+  }
+  .frontier td { font-family: "IBM Plex Mono", ui-monospace, monospace; font-variant-numeric: tabular-nums; }
+  .frontier tr.best td { background: color-mix(in srgb, var(--accent) 10%, transparent); }
+  .ledger { margin: 0; display: flex; flex-direction: column; gap: 0; }
+  .ledger div {
+    display: flex; justify-content: space-between; align-items: baseline; gap: 16px;
+    padding: 9px 0; border-top: 1px solid var(--hairline-2);
+  }
+  .ledger div:first-child { border-top: 0; }
+  .ledger div.total { border-top: 2px solid var(--hairline); }
+  .ledger dt { font-size: 14px; color: var(--ink-2); }
+  .ledger div.total dt { color: var(--ink); font-weight: 600; }
+  .ledger dd {
+    margin: 0; font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 15px;
+    font-variant-numeric: tabular-nums; font-weight: 500;
+  }
+  .ledger div.total dd { font-size: 19px; font-weight: 600; }
+  .ledger .aside { font-size: 12px; color: var(--ink-3); margin-left: 8px; }
+
+  .advice { display: grid; grid-template-columns: 26px minmax(0,1fr) auto; gap: 14px; padding: 15px 18px; border-top: 1px solid var(--hairline-2); align-items: start; }
+  .advice-rank { font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 12px; color: var(--ink-3); padding-top: 3px; }
+  .advice-action { font-weight: 600; font-size: 14.5px; margin: 0; }
+  .advice-effect { margin: 3px 0 0; font-size: 13px; color: var(--ink-2); }
+  .advice-cost { margin: 6px 0 0; font-size: 12.5px; color: var(--ink-3); max-width: 62ch; }
+  .advice-delta {
+    font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 15px; font-weight: 600;
+    text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums;
+  }
+  .advice-delta small { display: block; font-size: 10px; font-weight: 400; letter-spacing: .07em; text-transform: uppercase; color: var(--ink-3); margin-top: 2px; }
+
+  .frontier .tag {
+    font-family: "Public Sans", sans-serif; font-size: 10px; letter-spacing: .08em;
+    text-transform: uppercase; color: var(--accent); font-weight: 600;
+  }
+
   /* ---------- layout ---------- */
   .grid {
     display: grid; grid-template-columns: 316px minmax(0, 1fr);
@@ -108,6 +185,8 @@
      A rail that simply scrolls with the page is also the one layout that keeps
      the reset and currency controls reachable at every window height. */
   .rail { display: flex; flex-direction: column; gap: 16px; }
+  .rail-group { display: flex; flex-direction: column; gap: 16px; }
+  .findings-group { display: flex; flex-direction: column; gap: 20px; }
 
   .panel {
     background: var(--surface); border: 1px solid var(--hairline);
@@ -323,10 +402,24 @@
     instrument being tested, not a forecast about anyone's life.
   </p>
 
+  <!-- Two points on one timeline, not two products. Stage one prices the
+       decision; stage two manages the position it leaves you holding. -->
+  <div class="stages" role="tablist" aria-label="Which question are you asking">
+    <button type="button" id="stage-before" role="tab" aria-selected="true">
+      <span class="stage-when">Before you go</span>
+      <span class="stage-q">Should I take this loan at all?</span>
+    </button>
+    <button type="button" id="stage-here" role="tab" aria-selected="false">
+      <span class="stage-when">Now that you're here</span>
+      <span class="stage-q">What can I spend and still clear it?</span>
+    </button>
+  </div>
+
   <div class="grid">
 
     <!-- ============ assumptions rail ============ -->
     <form class="rail" id="controls" autocomplete="off">
+     <div class="rail-group" id="rail-before">
       <section class="panel">
         <div class="panel-head"><h2 class="panel-title">The money</h2></div>
         <div class="panel-body" id="money-fields"></div>
@@ -352,10 +445,42 @@
       </section>
 
       <button type="button" class="reset" id="reset">Reset assumptions</button>
+     </div>
+
+     <div class="rail-group" id="rail-here" hidden>
+      <section class="panel">
+        <div class="panel-head"><h2 class="panel-title">Where you stand</h2></div>
+        <div class="panel-body" id="standing-fields"></div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-head"><h2 class="panel-title">Visa status</h2></div>
+        <div class="panel-body">
+          <div class="seg" role="group" aria-label="Visa status">
+            <button type="button" id="st-opt" aria-pressed="false">OPT</button>
+            <button type="button" id="st-stem" aria-pressed="false">STEM</button>
+            <button type="button" id="st-h1b" aria-pressed="true">H-1B</button>
+          </div>
+          <p style="margin:10px 0 0;font-size:12.5px;color:var(--ink-3);line-height:1.5">
+            H-1B gives the least room of the three: sixty days to find a new sponsor, against
+            ninety on OPT and a hundred and fifty across a STEM extension.
+          </p>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-head"><h2 class="panel-title">Where the money goes</h2></div>
+        <div class="panel-body" id="spend-fields"></div>
+      </section>
+
+      <button type="button" class="reset" id="reset-here">Reset assumptions</button>
+     </div>
     </form>
 
     <!-- ============ findings ============ -->
     <main class="findings">
+
+     <div class="findings-group" id="findings-before">
 
       <section class="panel">
         <div class="verdict">
@@ -412,6 +537,94 @@
         <h2>Decision Receipt</h2>
         <div id="receipt-body"></div>
       </section>
+
+     </div>
+
+     <div class="findings-group" id="findings-here" hidden>
+
+      <section class="panel">
+        <div class="verdict">
+          <p class="verdict-label" id="r-safe-label">Monthly discretionary spend that still clears the loan safely</p>
+          <p class="verdict-number" id="r-safe">—</p>
+          <p class="verdict-read" id="r-safe-read">Solving…</p>
+        </div>
+        <dl class="branch">
+          <div><dt>Laid off at least once in 10 years</dt><dd id="r-laid">—</dd></div>
+          <div><dt>Forced out of the country</dt><dd id="r-forced">—</dd></div>
+          <div><dt>Forced out while still owing</dt><dd id="r-owing">—</dd></div>
+        </dl>
+      </section>
+
+      <section class="panel">
+        <div class="panel-head"><h2 class="panel-title">Your month, in plain terms</h2></div>
+        <div class="panel-body">
+          <dl class="ledger" id="r-ledger"></dl>
+          <p class="clock-verdict" id="r-ledger-read" style="margin-top:14px"></p>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-head"><h2 class="panel-title">Where to give ground</h2></div>
+        <div class="panel-body" style="padding-bottom:6px">
+          <p class="chart-note">
+            Ranked by how much trouble each one actually removes, measured by re-running the model
+            rather than by rule of thumb. What you give up is stated next to what you get.
+          </p>
+        </div>
+        <div id="r-advice"></div>
+        <div class="panel-body" style="border-top:1px solid var(--hairline-2)">
+          <p class="clock-verdict" id="r-advice-read"></p>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-head"><h2 class="panel-title">The constraint that is not money</h2></div>
+        <div class="panel-body">
+          <p class="chart-note">
+            A layoff does not start a money problem, it starts a countdown. Ordinary advice says
+            hold three to six months of expenses. Your visa decides how many of those months you
+            are actually allowed to use.
+          </p>
+          <div class="clock">
+            <div class="clock-row">
+              <span class="clock-label">Your runway</span>
+              <span class="clock-track"><span class="clock-fill" id="r-bar-runway"></span></span>
+              <span class="clock-value" id="r-runway">—</span>
+            </div>
+            <div class="clock-row">
+              <span class="clock-label">Your visa allows</span>
+              <span class="clock-track"><span class="clock-fill" id="r-bar-clock" style="background:var(--mid)"></span></span>
+              <span class="clock-value" id="r-clock">—</span>
+            </div>
+          </div>
+          <p class="clock-verdict" id="r-verdict"></p>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-head">
+          <h2 class="panel-title">Prepay, or build runway?</h2>
+        </div>
+        <div class="panel-body">
+          <p class="chart-note">
+            Every calculator tells you to kill the debt fastest. That shortens your exposure to the
+            debt — and spends the buffer that keeps you in the country. This is the frontier, not
+            an opinion.
+          </p>
+          <div style="overflow-x:auto">
+            <table class="frontier">
+              <thead><tr>
+                <th>Surplus to loan</th><th>Bad outcome</th><th>Out while owing</th>
+                <th>Cleared in</th><th>Worst-decile position</th>
+              </tr></thead>
+              <tbody id="r-frontier"></tbody>
+            </table>
+          </div>
+          <p class="clock-verdict" id="r-frontier-read" style="margin-top:14px"></p>
+        </div>
+      </section>
+
+     </div>
 
       <footer>
         Built on a zero-dependency Monte Carlo engine that carries the loan in its own currency,
@@ -779,6 +992,232 @@
   ];
 
   /* =====================================================================
+     STAGE TWO ENGINE — already here. Port of src/engine/resident.ts and
+     src/engine/solve.ts. For a resident on a work visa the binding
+     constraint is not money, it is time before status lapses.
+     ===================================================================== */
+
+  const UNEMPLOYMENT_GRACE_DAYS = { opt: 90, "stem-opt": 150, h1b: 60 };
+  const DISCRETIONARY_RETAINED_WHEN_UNEMPLOYED = 0.3;
+
+  function monthlySpend(spend, fx, employed) {
+    const essentials = spend.rent + spend.groceries + spend.transport + spend.health;
+    if (employed) return essentials + spend.discretionary + spend.remittanceHome / fx;
+    return essentials + spend.discretionary * DISCRETIONARY_RETAINED_WHEN_UNEMPLOYED;
+  }
+
+  function runwayMonths(input) {
+    const fx = input.corridor.macro.fxSpot;
+    const emiOwn = amortizingPayment(
+      input.loan.outstanding, input.loan.nominalRate / 12, input.loan.remainingTenureMonths);
+    // The instalment must be converted before being added to dollar outgoings.
+    const emiDest = input.loan.currency === input.corridor.destCurrency ? emiOwn : emiOwn / fx;
+    const burn = monthlySpend(input.spend, fx, false) + emiDest;
+    return burn <= 0 ? Infinity : input.savings / burn;
+  }
+
+  function simulateResidentPath(input, horizonMonths, rng) {
+    const { corridor, loan } = input;
+    const { macro, homeReturn } = corridor;
+    const loanIsDest = loan.currency === corridor.destCurrency;
+    const graceMonths = Math.round(UNEMPLOYMENT_GRACE_DAYS[input.status] / 30);
+    const monthlyRate = loan.nominalRate / 12;
+    const emi = amortizingPayment(loan.outstanding, monthlyRate, loan.remainingTenureMonths);
+
+    let fx = macro.fxSpot, outstanding = loan.outstanding, savings = input.savings;
+    let employed = true, monthsUnemployed = 0, returnedHomeAt = null, homeSalary = 0;
+    let distressed = false, everLaidOff = false, monthsToPayoff = null;
+    let lotteryLeft = input.lotteryAttemptsRemaining, monthsElapsed = 0;
+
+    for (let m = 0; m < horizonMonths; m++) {
+      monthsElapsed = m;
+      const years = m / 12;
+      if (m > 0) {
+        const drift = (macro.fxDrift - (macro.fxVol * macro.fxVol) / 2) / 12;
+        fx *= Math.exp(drift + (macro.fxVol / Math.sqrt(12)) * rng.normal());
+      }
+      const loanFx = loanIsDest ? fx : 1;
+      const homeIdx = Math.pow(1 + macro.homeInflation, years);
+
+      if (returnedHomeAt === null) {
+        if (employed) {
+          if (rng.bernoulli(input.monthlyLayoffHazard)) { employed = false; everLaidOff = true; monthsUnemployed = 0; }
+        } else {
+          monthsUnemployed++;
+          if (rng.bernoulli(input.monthlyRehireHazard)) { employed = true; monthsUnemployed = 0; }
+          else if (monthsUnemployed > graceMonths) returnedHomeAt = m;
+        }
+        if (returnedHomeAt === null && input.status !== "h1b" && m > 0 && m % 12 === 0 && lotteryLeft > 0) {
+          if (employed && rng.bernoulli(corridor.immigration.lotterySelectionProbability)) lotteryLeft = 0;
+          else { lotteryLeft--; if (lotteryLeft <= 0) returnedHomeAt = m; }
+        }
+      }
+      if (returnedHomeAt === m) {
+        homeSalary = sampleCurve(homeReturn.baseSalary, rng) * homeReturn.foreignDegreePremium;
+      }
+
+      let postTaxDest = 0, postTaxHome = 0;
+      if (returnedHomeAt !== null) {
+        const since = m - returnedHomeAt;
+        if (since >= homeReturn.monthsToOffer) {
+          const y = (since - homeReturn.monthsToOffer) / 12;
+          postTaxHome = (homeSalary / 12) * Math.pow(1 + homeReturn.realGrowth, y) * homeIdx *
+            (1 - macro.homeEffectiveTaxRate);
+        }
+      } else if (employed) {
+        postTaxDest = (input.salary / 12) * Math.pow(1 + input.realWageGrowth, years) *
+          Math.pow(1 + macro.destInflation, years) * (1 - macro.destEffectiveTaxRate);
+      }
+
+      const costDest = returnedHomeAt !== null ? 0 : monthlySpend(input.spend, fx, employed);
+      const costHome = returnedHomeAt !== null
+        ? (input.spend.remittanceHome + input.spend.groceries * fx) * homeIdx : 0;
+
+      if (outstanding > 0) {
+        outstanding += outstanding * monthlyRate;
+        const due = Math.min(emi, outstanding);
+        const availableLoanCcy = returnedHomeAt !== null
+          ? Math.max(0, postTaxHome - costHome) / loanFx
+          : (Math.max(0, postTaxDest - costDest) + Math.max(0, savings)) * (loanIsDest ? 1 : fx) / loanFx;
+        const paid = Math.min(due, Math.max(0, availableLoanCcy));
+        outstanding -= paid;
+        if (paid < due - 1e-6) distressed = true;
+
+        if (returnedHomeAt === null) {
+          const paidDest = paid * (loanIsDest ? 1 : loanFx / fx);
+          const net = postTaxDest - costDest - paidDest;
+          savings += net;
+          if (savings < 0) { distressed = true; savings = 0; }
+          if (outstanding > 0 && net > 0 && input.prepaymentAggressiveness > 0) {
+            const prepayDest = net * input.prepaymentAggressiveness;
+            const prepayLoan = Math.min(outstanding, prepayDest * (loanIsDest ? 1 : fx) / loanFx);
+            outstanding -= prepayLoan;
+            savings -= prepayLoan * (loanIsDest ? 1 : loanFx / fx);
+          }
+        }
+        if (outstanding <= 0.01) { outstanding = 0; if (monthsToPayoff === null) monthsToPayoff = m; }
+      } else if (returnedHomeAt === null) {
+        savings += postTaxDest - costDest;
+        if (savings < 0) savings = 0;
+      }
+    }
+
+    const finalHomeIdx = Math.pow(1 + macro.homeInflation, monthsElapsed / 12);
+    return {
+      forcedReturn: returnedHomeAt !== null,
+      forcedReturnWhileOwing: returnedHomeAt !== null && outstanding > 0,
+      distressed, everLaidOff, monthsToPayoff,
+      finalNetWorth: (savings * fx - outstanding * (loanIsDest ? fx : 1)) / finalHomeIdx,
+    };
+  }
+
+  function simulateResident(input, config) {
+    const rng = createRng(config.seed);
+    const outcomes = new Array(config.paths);
+    for (let i = 0; i < config.paths; i++) outcomes[i] = simulateResidentPath(input, config.horizonMonths, rng);
+    const payoff = outcomes.map((o) => o.monthsToPayoff).filter((m) => m !== null);
+    return {
+      paths: outcomes.length,
+      pForcedReturnWhileOwing: fractionWhere(outcomes, (o) => o.forcedReturnWhileOwing),
+      pForcedReturn: fractionWhere(outcomes, (o) => o.forcedReturn),
+      pDistress: fractionWhere(outcomes, (o) => o.distressed),
+      pBadOutcome: fractionWhere(outcomes, (o) => o.distressed || o.forcedReturnWhileOwing),
+      pLaidOff: fractionWhere(outcomes, (o) => o.everLaidOff),
+      pCleared: payoff.length / outcomes.length,
+      monthsToPayoff: summarize(payoff),
+      finalNetWorth: summarize(outcomes.map((o) => o.finalNetWorth)),
+      runwayMonths: runwayMonths(input),
+      visaClockMonths: UNEMPLOYMENT_GRACE_DAYS[input.status] / 30,
+    };
+  }
+
+  /** Largest discretionary spend holding bad outcomes at or below target. */
+  function solveSafeDiscretionary(input, config, target) {
+    const evaluate = (d) => simulateResident({ ...input, spend: { ...input.spend, discretionary: d } }, config);
+    const requested = input.spend.discretionary;
+    const riskAtRequested = evaluate(requested).pBadOutcome;
+    const floor = evaluate(0);
+    if (floor.pBadOutcome > target) {
+      return { safeDiscretionary: 0, achievedRisk: floor.pBadOutcome, riskAtRequested,
+        requestedDiscretionary: requested, target, infeasible: true };
+    }
+    let hi = Math.max(requested, 500);
+    for (let i = 0; i < 6 && evaluate(hi).pBadOutcome <= target; i++) hi *= 2;
+    let lo = 0;
+    for (let i = 0; i < 12; i++) {
+      const mid = (lo + hi) / 2;
+      if (evaluate(mid).pBadOutcome <= target) lo = mid; else hi = mid;
+    }
+    return { safeDiscretionary: lo, achievedRisk: evaluate(lo).pBadOutcome, riskAtRequested,
+      requestedDiscretionary: requested, target, infeasible: false };
+  }
+
+  const PREPAY_STEPS = [0, 0.25, 0.5, 0.75, 1];
+  function prepaymentFrontier(input, config) {
+    return PREPAY_STEPS.map((a) => {
+      const r = simulateResident({ ...input, prepaymentAggressiveness: a }, config);
+      return { aggressiveness: a, pBadOutcome: r.pBadOutcome,
+        pForcedReturnWhileOwing: r.pForcedReturnWhileOwing,
+        medianMonthsToPayoff: r.monthsToPayoff.p50, finalNetWorthP10: r.finalNetWorth.p10 };
+    });
+  }
+
+  /** What actually lands in your pocket each month today. */
+  function monthlySurplusToday(input) {
+    const fx = input.corridor.macro.fxSpot;
+    const takeHome = (input.salary / 12) * (1 - input.corridor.macro.destEffectiveTaxRate);
+    const s = input.spend;
+    const spending = s.rent + s.groceries + s.transport + s.health + s.discretionary + s.remittanceHome / fx;
+    const emiOwn = amortizingPayment(input.loan.outstanding, input.loan.nominalRate / 12, input.loan.remainingTenureMonths);
+    const instalment = input.loan.currency === input.corridor.destCurrency ? emiOwn : emiOwn / fx;
+    return { takeHome, spending, instalment, surplus: takeHome - spending - instalment };
+  }
+
+  /**
+   * Concrete compromises, ranked by how much trouble each one removes.
+   * Deliberately things a person can actually do this month, each re-simulated
+   * on the same seed so the comparison is the change and not simulation noise.
+   */
+  function residentAdvice(input, config) {
+    const base = simulateResident(input, config);
+    const baseCash = monthlySurplusToday(input);
+    const options = [
+      { id: "rent", action: "Find a place $300 a month cheaper, or take a housemate",
+        giveUp: "A smaller flat, a longer commute, or less privacy.",
+        next: input.spend.rent > 700 ? { ...input, spend: { ...input.spend, rent: input.spend.rent - 300 } } : null },
+      { id: "buffer", action: "Send less to the loan and more to the bank",
+        giveUp: "The loan takes longer to clear and costs more in interest overall.",
+        next: input.prepaymentAggressiveness > .25 ? { ...input, prepaymentAggressiveness: .25 } : null },
+      { id: "remittance", action: "Halve what you send home for a year",
+        giveUp: "The hardest one on this list, and the one most people refuse. Worth knowing the size of it before deciding.",
+        next: input.spend.remittanceHome > 5000
+          ? { ...input, spend: { ...input.spend, remittanceHome: input.spend.remittanceHome * .5 } } : null },
+      { id: "tenure", action: "Ask the lender to stretch the loan over five more years",
+        giveUp: "A smaller payment each month, but noticeably more interest in total.",
+        next: { ...input, loan: { ...input.loan, remainingTenureMonths: input.loan.remainingTenureMonths + 60 } } },
+      { id: "rate", action: "Refinance, or pledge collateral, to cut the rate by two points",
+        giveUp: "Family property or deposits on the line. This moves the risk onto whoever signs, it does not delete it.",
+        next: input.loan.nominalRate > .07
+          ? { ...input, loan: { ...input.loan, nominalRate: input.loan.nominalRate - .02 } } : null },
+      { id: "discretionary", action: "Cut $200 a month from everything that is not rent, food or travel",
+        giveUp: "Eating out, subscriptions, trips. The smallest lever here, and the one people reach for first.",
+        next: input.spend.discretionary > 200
+          ? { ...input, spend: { ...input.spend, discretionary: input.spend.discretionary - 200 } } : null },
+    ];
+    const out = [];
+    for (const o of options) {
+      if (o.next === null) continue;
+      const r = simulateResident(o.next, config);
+      const cash = monthlySurplusToday(o.next);
+      out.push({ id: o.id, action: o.action, giveUp: o.giveUp,
+        riskBefore: base.pBadOutcome, riskAfter: r.pBadOutcome,
+        monthlyGain: cash.surplus - baseCash.surplus,
+        runwayBefore: base.runwayMonths, runwayAfter: r.runwayMonths });
+    }
+    return out.sort((a, b) => a.riskAfter - b.riskAfter);
+  }
+
+  /* =====================================================================
      REFERENCE SCENARIO — placeholder priors, mirrors src/data/corridors
      ===================================================================== */
 
@@ -811,6 +1250,27 @@
   const CONFIG = { paths: 5000, horizonMonths: 180, seed: "downside-v1" };
   const LEVER_CONFIG = { paths: 3500, horizonMonths: 180, seed: "downside-v1" };
 
+  /** The same person two years on: degree done, job landed, lottery cleared. */
+  const REFERENCE_RESIDENT = {
+    corridor: REFERENCE.corridor,
+    loan: { outstanding: 5_800_000, currency: "INR", nominalRate: .1125, remainingTenureMonths: 108 },
+    salary: 115_000,
+    realWageGrowth: .04,
+    savings: 12_000,
+    spend: { rent: 1_900, groceries: 500, transport: 200, health: 150, remittanceHome: 25_000, discretionary: 700 },
+    status: "h1b",
+    lotteryAttemptsRemaining: 0,
+    monthlyLayoffHazard: .011,
+    monthlyRehireHazard: .22,
+    prepaymentAggressiveness: .5,
+    ageNow: 26,
+  };
+
+  // The solver runs a couple of dozen simulations, so it gets a smaller budget
+  // than the single headline run in stage one.
+  const RESIDENT_CONFIG = { paths: 2200, horizonMonths: 120, seed: "downside-resident-v1" };
+  const RISK_TARGET = 0.1;
+
   /* =====================================================================
      FORMATTING
      ===================================================================== */
@@ -832,6 +1292,7 @@
     if (a >= 1e5) return sign + Math.round(a / 1e5) + "L";
     return sign + Math.round(a / 1e3) + "k";
   };
+  const usd = (v) => isFinite(v) ? "$" + Math.round(v).toLocaleString("en-US") : "n/a";
   const pct = (v, d = 1) => isFinite(v) ? (v * 100).toFixed(d) + "%" : "n/a";
   const mos = (v) => {
     if (!isFinite(v)) return "never";
@@ -870,11 +1331,46 @@
       get: (s) => s.corridor.macro.fxDrift,        set: (s, v) => { s.corridor.macro.fxDrift = v; } },
   ];
 
+  const RESIDENT_SPECS = [
+    { group: "standing", key: "salary", label: "Salary", min: 40000, max: 400000, step: 5000, fmt: (v) => usd(v),
+      get: (s) => s.salary,               set: (s, v) => { s.salary = v; } },
+    { group: "standing", key: "outstanding", label: "Loan outstanding", min: 0, max: 15000000, step: 100000, fmt: inr,
+      get: (s) => s.loan.outstanding,     set: (s, v) => { s.loan.outstanding = v; } },
+    { group: "standing", key: "rrate", label: "Interest rate", min: .06, max: .16, step: .0025, fmt: (v) => pct(v, 2),
+      get: (s) => s.loan.nominalRate,     set: (s, v) => { s.loan.nominalRate = v; } },
+    { group: "standing", key: "savings", label: "Savings in hand", min: 0, max: 120000, step: 1000, fmt: (v) => usd(v),
+      get: (s) => s.savings,              set: (s, v) => { s.savings = v; } },
+    { group: "standing", key: "prepay", label: "Surplus to the loan", min: 0, max: 1, step: .05, fmt: (v) => pct(v, 0),
+      get: (s) => s.prepaymentAggressiveness, set: (s, v) => { s.prepaymentAggressiveness = v; } },
+    { group: "standing", key: "layoff", label: "Layoff risk per year", min: 0, max: .35, step: .005, fmt: (v) => pct(v, 1),
+      get: (s) => 1 - Math.pow(1 - s.monthlyLayoffHazard, 12),
+      set: (s, v) => { s.monthlyLayoffHazard = 1 - Math.pow(1 - v, 1 / 12); } },
+    { group: "standing", key: "rehire", label: "Chance of a new job in 3mo", min: .05, max: .99, step: .01, fmt: (v) => pct(v, 0),
+      get: (s) => 1 - Math.pow(1 - s.monthlyRehireHazard, 3),
+      set: (s, v) => { s.monthlyRehireHazard = 1 - Math.pow(1 - v, 1 / 3); } },
+
+    { group: "spend", key: "rent", label: "Rent", min: 500, max: 5000, step: 50, fmt: (v) => usd(v),
+      get: (s) => s.spend.rent,           set: (s, v) => { s.spend.rent = v; } },
+    { group: "spend", key: "groceries", label: "Groceries", min: 100, max: 1500, step: 25, fmt: (v) => usd(v),
+      get: (s) => s.spend.groceries,      set: (s, v) => { s.spend.groceries = v; } },
+    { group: "spend", key: "transport", label: "Transport", min: 0, max: 1200, step: 25, fmt: (v) => usd(v),
+      get: (s) => s.spend.transport,      set: (s, v) => { s.spend.transport = v; } },
+    { group: "spend", key: "health", label: "Health", min: 0, max: 900, step: 25, fmt: (v) => usd(v),
+      get: (s) => s.spend.health,         set: (s, v) => { s.spend.health = v; } },
+    { group: "spend", key: "remit", label: "Sent home", min: 0, max: 200000, step: 2500, fmt: inr,
+      get: (s) => s.spend.remittanceHome, set: (s, v) => { s.spend.remittanceHome = v; } },
+    { group: "spend", key: "disc", label: "Everything else", min: 0, max: 4000, step: 50, fmt: (v) => usd(v),
+      get: (s) => s.spend.discretionary,  set: (s, v) => { s.spend.discretionary = v; } },
+  ];
+
+  let mode = "before";
   let state = structuredClone(REFERENCE);
+  let resident = structuredClone(REFERENCE_RESIDENT);
   const inputs = new Map();
 
   function buildControls() {
-    for (const spec of SPECS) {
+    for (const spec of SPECS.concat(RESIDENT_SPECS)) {
+      const target = () => (RESIDENT_SPECS.includes(spec) ? resident : state);
       const host = document.getElementById(spec.group + "-fields");
       const field = document.createElement("div");
       field.className = "field";
@@ -888,7 +1384,7 @@
       const el = field.querySelector("input");
       inputs.set(spec.key, el);
       el.addEventListener("input", () => {
-        spec.set(state, Number(el.value));
+        spec.set(target(), Number(el.value));
         document.getElementById("out-" + spec.key).textContent = spec.fmt(Number(el.value));
         schedule();
       });
@@ -897,10 +1393,13 @@
   }
 
   function syncControls() {
-    for (const spec of SPECS) {
-      const v = spec.get(state);
+    for (const spec of SPECS.concat(RESIDENT_SPECS)) {
+      const v = spec.get(RESIDENT_SPECS.includes(spec) ? resident : state);
       inputs.get(spec.key).value = v;
       document.getElementById("out-" + spec.key).textContent = spec.fmt(v);
+    }
+    for (const [id, st] of [["st-opt", "opt"], ["st-stem", "stem-opt"], ["st-h1b", "h1b"]]) {
+      document.getElementById(id).setAttribute("aria-pressed", String(resident.status === st));
     }
     const isInr = state.loan.currency === "INR";
     document.getElementById("ccy-inr").setAttribute("aria-pressed", String(isInr));
@@ -1105,12 +1604,144 @@
      ORCHESTRATION
      ===================================================================== */
 
+  function renderResident() {
+    const base = simulateResident(resident, RESIDENT_CONFIG);
+    const safe = solveSafeDiscretionary(resident, RESIDENT_CONFIG, RISK_TARGET);
+    const fx = resident.corridor.macro.fxSpot;
+
+    const hero = document.getElementById("r-safe");
+    const read = document.getElementById("r-safe-read");
+    const label = document.getElementById("r-safe-label");
+    if (safe.infeasible) {
+      // There is no safe allowance to report, but there is still a real number:
+      // the risk left after cutting discretionary spending to zero. That says
+      // far more than a dash, and it names the actual problem.
+      label.textContent = "Chance of trouble even with no discretionary spending at all";
+      hero.textContent = pct(safe.achievedRisk, 0);
+      hero.style.color = "var(--loss)";
+      read.innerHTML = "No amount of cutting back gets you under " + pct(safe.target, 0) +
+        ", because the trouble is not in what you spend on yourself. The levers here are rent, " +
+        "savings and the loan — not coffee.";
+    } else {
+      label.textContent = "Monthly discretionary spend that still clears the loan safely";
+      hero.textContent = usd(Math.round(safe.safeDiscretionary));
+      const over = safe.requestedDiscretionary > safe.safeDiscretionary;
+      hero.style.color = over ? "var(--loss)" : "var(--gain)";
+      const delta = Math.abs(safe.safeDiscretionary - safe.requestedDiscretionary);
+      read.innerHTML = over
+        ? "You are spending <b>" + usd(Math.round(safe.requestedDiscretionary)) + "</b> a month, which puts the " +
+          "chance of trouble at <b>" + pct(safe.riskAtRequested) + "</b>. Cutting " +
+          usd(Math.round(delta)) + " a month (" + inr(delta * fx) + ") brings it to " +
+          pct(safe.achievedRisk) + "."
+        : "You are spending <b>" + usd(Math.round(safe.requestedDiscretionary)) + "</b>, so you have " +
+          usd(Math.round(delta)) + " a month of headroom before the chance of trouble reaches " +
+          pct(RISK_TARGET, 0) + ".";
+    }
+
+    document.getElementById("r-laid").textContent = pct(base.pLaidOff, 0);
+    document.getElementById("r-forced").textContent = pct(base.pForcedReturn, 0);
+    document.getElementById("r-owing").textContent = pct(base.pForcedReturnWhileOwing, 0);
+
+    // Runway against the clock, on a shared scale so the bars are comparable.
+    const runway = Math.min(base.runwayMonths, 24);
+    const clock = base.visaClockMonths;
+    const scale = Math.max(runway, clock, 6);
+    const short = base.runwayMonths < clock;
+    const bar = document.getElementById("r-bar-runway");
+    bar.style.width = (runway / scale) * 100 + "%";
+    bar.style.background = short ? "var(--loss)" : "var(--gain)";
+    document.getElementById("r-bar-clock").style.width = (clock / scale) * 100 + "%";
+    document.getElementById("r-runway").textContent = base.runwayMonths.toFixed(1) + " mo";
+    document.getElementById("r-clock").textContent = clock.toFixed(1) + " mo";
+    document.getElementById("r-verdict").innerHTML = short
+      ? "Your savings run out <b>before</b> your visa does. Money is your binding constraint, and " +
+        "you would be leaving the country with the loan still open."
+      : "You can survive the full window your visa allows. Past " + clock.toFixed(1) +
+        " months the constraint stops being money and becomes status: more savings will not buy " +
+        "more time.";
+
+    // --- your month, in plain terms ---
+    const cash = monthlySurplusToday(resident);
+    document.getElementById("r-ledger").innerHTML =
+      '<div><dt>You take home</dt><dd>' + usd(cash.takeHome) + '</dd></div>' +
+      '<div><dt>You spend on living</dt><dd>' + usd(cash.spending) + '</dd></div>' +
+      '<div><dt>The loan takes</dt><dd>' + usd(cash.instalment) + '</dd></div>' +
+      '<div class="total"><dt>Left over each month</dt><dd>' + usd(cash.surplus) +
+      '<span class="aside">' + inr(cash.surplus * fx) + '</span></dd></div>';
+    document.getElementById("r-ledger-read").innerHTML = cash.surplus <= 0
+      ? "You are spending more than you earn. Nothing below fixes that on its own."
+      : "So you are putting away about <b>" + usd(cash.surplus) + "</b> a month, before anything goes wrong.";
+
+    // --- where to give ground ---
+    const advice = residentAdvice(resident, RESIDENT_CONFIG);
+    document.getElementById("r-advice").innerHTML = advice.map((a, i) => {
+      const drop = (a.riskBefore - a.riskAfter) * 100;
+      const cls = drop > 0.5 ? "good" : drop < -0.5 ? "bad" : "";
+      const num = drop > 0.5 ? "−" + drop.toFixed(1) : drop < -0.5 ? "+" + (-drop).toFixed(1) : "±0";
+      const pocket = a.monthlyGain >= 0
+        ? "Keeps " + usd(a.monthlyGain) + " more a month in your pocket"
+        : "Costs you " + usd(-a.monthlyGain) + " a month";
+      const cushion = a.runwayAfter > a.runwayBefore + 0.05
+        ? ", cushion " + a.runwayBefore.toFixed(1) + " → " + a.runwayAfter.toFixed(1) + " months" : "";
+      return '<div class="advice"><div class="advice-rank">' + (i + 1) + '</div><div>' +
+        '<p class="advice-action">' + a.action + '</p>' +
+        '<p class="advice-effect">Chance of trouble ' + pct(a.riskBefore, 0) + " → " + pct(a.riskAfter, 0) +
+        ". " + pocket + cushion + '.</p>' +
+        '<p class="advice-cost">You give up: ' + a.giveUp + '</p></div>' +
+        '<div class="advice-delta ' + cls + '">' + num + '<small>points</small></div></div>';
+    }).join("");
+
+    const frontier = prepaymentFrontier(resident, RESIDENT_CONFIG);
+    const safest = [...frontier].sort((a, b) => a.pBadOutcome - b.pBadOutcome)[0];
+
+    // Where freed-up money should go is computed by the frontier, not asserted.
+    // Asserting it here would risk contradicting the table directly below.
+    const topDrop = advice.length ? (advice[0].riskBefore - advice[0].riskAfter) * 100 : 0;
+    const cur = resident.prepaymentAggressiveness;
+    const dir = safest.aggressiveness > cur + .05
+      ? "send more of it at the loan — <b>" + pct(safest.aggressiveness, 0) + "</b> of what is left over, up from " + pct(cur, 0)
+      : safest.aggressiveness < cur - .05
+        ? "keep more of it in the bank — put <b>" + pct(safest.aggressiveness, 0) + "</b> at the loan instead of " + pct(cur, 0)
+        : "keep splitting it as you are, around <b>" + pct(cur, 0) + "</b> at the loan";
+    document.getElementById("r-advice-read").innerHTML = (topDrop < 1
+      ? "Honestly, none of these moves the needle much on its own. Your risk here is not really " +
+        "about spending — it is that a layoff would put you out of cash before your visa runs out. " +
+        "Getting your cushion past " + base.visaClockMonths.toFixed(0) + " months is what actually changes your position. "
+      : "If you only do one thing: <b>" + advice[0].action.toLowerCase() + "</b>. ") +
+      "Whatever it frees up, " + dir + ".";
+    const richest = [...frontier].sort((a, b) => b.finalNetWorthP10 - a.finalNetWorthP10)[0];
+    document.getElementById("r-frontier").innerHTML = frontier.map((p) => {
+      const best = p.aggressiveness === safest.aggressiveness;
+      return '<tr class="' + (best ? "best" : "") + '"><td>' + pct(p.aggressiveness, 0) +
+        (best ? ' <span class="tag">safest</span>' : "") + "</td><td>" + pct(p.pBadOutcome) +
+        "</td><td>" + pct(p.pForcedReturnWhileOwing) + "</td><td>" +
+        mos(p.medianMonthsToPayoff) + "</td><td>" + inr(p.finalNetWorthP10) + "</td></tr>";
+    }).join("");
+
+    const maxStep = frontier[frontier.length - 1];
+    let note = safest.aggressiveness < maxStep.aggressiveness
+      ? "There is a limit. Past <b>" + pct(safest.aggressiveness, 0) + "</b>, risk rises again — you are " +
+        "buying down principal with the runway that keeps you in the country."
+      : "Here, clearing the loan fastest also minimises the chance of being caught abroad in debt. " +
+        "The debt is only dangerous while it exists.";
+    if (richest.aggressiveness < safest.aggressiveness) {
+      note += " But the two criteria disagree, and that is the point: paying down fastest leaves " +
+        "you poorest in the branch where you are sent home anyway. Clearing the loan removes the " +
+        "debt risk. It does not remove the visa risk.";
+    }
+    document.getElementById("r-frontier-read").innerHTML = note;
+  }
+
   let runToken = 0;
   let leverTimer = 0;
 
   function schedule() {
     clearTimeout(leverTimer);
     const token = ++runToken;
+    if (mode === "here") {
+      setTimeout(() => { if (token === runToken) renderResident(); }, 0);
+      return;
+    }
     // setTimeout rather than requestAnimationFrame: rAF callbacks do not fire
     // while a frame is hidden or throttled, which would leave this page showing
     // its markup and never its numbers. A timer always runs, and yielding first
@@ -1174,6 +1805,34 @@
     state = structuredClone(REFERENCE);
     syncControls(); schedule();
   });
+
+  document.getElementById("reset-here").addEventListener("click", () => {
+    resident = structuredClone(REFERENCE_RESIDENT);
+    syncControls(); schedule();
+  });
+
+  for (const [id, st] of [["st-opt", "opt"], ["st-stem", "stem-opt"], ["st-h1b", "h1b"]]) {
+    document.getElementById(id).addEventListener("click", () => {
+      resident.status = st;
+      // Still on OPT means the cap lottery is still ahead of you, and running
+      // out of attempts ends the stay however well the job is going.
+      resident.lotteryAttemptsRemaining = st === "h1b" ? 0 : 3;
+      syncControls(); schedule();
+    });
+  }
+
+  function setMode(next) {
+    mode = next;
+    document.getElementById("stage-before").setAttribute("aria-selected", String(next === "before"));
+    document.getElementById("stage-here").setAttribute("aria-selected", String(next === "here"));
+    document.getElementById("rail-before").hidden = next !== "before";
+    document.getElementById("rail-here").hidden = next !== "here";
+    document.getElementById("findings-before").hidden = next !== "before";
+    document.getElementById("findings-here").hidden = next !== "here";
+    schedule();
+  }
+  document.getElementById("stage-before").addEventListener("click", () => setMode("before"));
+  document.getElementById("stage-here").addEventListener("click", () => setMode("here"));
 
   const toggle = document.getElementById("toggle-table");
   toggle.addEventListener("click", () => {

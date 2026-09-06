@@ -12,7 +12,7 @@
  * two outputs, no divergence.
  */
 
-import { mkdirSync, readFileSync, writeFileSync, rmSync } from "node:fs";
+import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -68,7 +68,11 @@ ${body}
 </html>
 `;
 
-rmSync(outDir, { recursive: true, force: true });
+// Overwrite in place rather than removing the directory first. On Windows a
+// directory that any process has open as its working directory cannot be
+// removed, which made the build fail whenever a local preview server was
+// running out of it. The build only ever emits these two files, so there is
+// nothing stale to clear.
 mkdirSync(outDir, { recursive: true });
 writeFileSync(out, page, "utf8");
 // Pages serves the uploaded artifact directly, but .nojekyll costs nothing and

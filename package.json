@@ -11,7 +11,8 @@
     "sim": "node src/cli.ts",
     "test": "node --test \"test/*.test.ts\"",
     "typecheck": "tsc --noEmit -p tsconfig.json",
-    "build": "node scripts/build-site.mjs"
+    "build": "node scripts/build-site.mjs",
+    "runway": "node src/runway.ts"
   },
   "devDependencies": {
     "@types/node": "^22.20.1",

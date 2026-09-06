@@ -24,6 +24,7 @@ import type {
   SourceRef,
   StudentInput,
 } from "../../engine/types.ts";
+import type { ResidentInput } from "../../engine/resident.ts";
 
 const pending = (
   id: string,
@@ -224,3 +225,37 @@ export function collectSources(input: StudentInput): SourceRef[] {
   const seen = new Set<string>();
   return refs.filter((r) => (seen.has(r.id) ? false : (seen.add(r.id), true)));
 }
+
+/**
+ * Reference scenario for the second life stage: the same person, two years on.
+ * They took the loan, finished the degree, landed the job and cleared the
+ * lottery. PLACEHOLDER PRIORS, exactly as above.
+ */
+export const referenceResident: ResidentInput = {
+  corridor: corridorIndiaUsa,
+  loan: {
+    outstanding: 5_800_000,
+    currency: "INR",
+    nominalRate: 0.1125,
+    remainingTenureMonths: 108,
+  },
+  salary: 115_000,
+  realWageGrowth: 0.04,
+  savings: 12_000,
+  spend: {
+    rent: 1_900,
+    groceries: 500,
+    transport: 200,
+    health: 150,
+    remittanceHome: 25_000,
+    discretionary: 700,
+  },
+  status: "h1b",
+  lotteryAttemptsRemaining: 0,
+  // Roughly a one-in-eight chance of losing the job in any given year.
+  monthlyLayoffHazard: 0.011,
+  // Roughly even odds of a new sponsoring employer within three months.
+  monthlyRehireHazard: 0.22,
+  prepaymentAggressiveness: 0.5,
+  ageNow: 26,
+};
