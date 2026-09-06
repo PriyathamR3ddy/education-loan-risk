@@ -2,6 +2,11 @@
 
 **An outcome distribution for a cross-border education loan. Not a calculator.**
 
+**Live: https://priyathamr3ddy.github.io/education-loan-risk/**
+
+> The numbers on that page are placeholder priors, not sourced data. It is an
+> instrument being tested, not a forecast. See *Status* below.
+
 Every tool a prospective international student can reach today answers the wrong
 question. They compute an average: *this degree returns X%*. But a student does
 not live an average. They live one draw from a distribution that is sharply
