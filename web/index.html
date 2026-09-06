@@ -140,6 +140,29 @@
   }
   .frontier td { font-family: "IBM Plex Mono", ui-monospace, monospace; font-variant-numeric: tabular-nums; }
   .frontier tr.best td { background: color-mix(in srgb, var(--accent) 10%, transparent); }
+  /* ---------- who this is for ---------- */
+  input[type="text"], select {
+    width: 100%; padding: 8px 10px; border: 1px solid var(--hairline); border-radius: 3px;
+    background: var(--surface-2); color: var(--ink); font-family: inherit; font-size: 14px;
+  }
+  select { cursor: pointer; }
+  input[type="text"]:focus-visible, select:focus-visible {
+    outline: 2px solid var(--accent); outline-offset: 1px;
+  }
+  input[type="text"]::placeholder { color: var(--ink-3); }
+  .privacy {
+    margin: 10px 0 0; font-size: 12px; color: var(--ink-3); line-height: 1.5;
+  }
+  .whofor {
+    margin: 10px 0 0; font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--accent);
+  }
+  .stem-note {
+    margin: 9px 0 0; font-size: 12.5px; line-height: 1.5; padding: 8px 10px;
+    border-radius: 3px; border-left: 2px solid var(--loss);
+    background: var(--surface-2); color: var(--ink-2);
+  }
+
   .ledger { margin: 0; display: flex; flex-direction: column; gap: 0; }
   .ledger div {
     display: flex; justify-content: space-between; align-items: baseline; gap: 16px;
@@ -388,6 +411,7 @@
         loan, or come home to a rupee salary still owing for a dollar-priced degree. This simulates
         both and reports the shape.
       </p>
+      <p class="whofor" id="whofor"></p>
     </div>
     <div class="imprint">
       Monte&nbsp;Carlo<br>
@@ -419,6 +443,30 @@
 
     <!-- ============ assumptions rail ============ -->
     <form class="rail" id="controls" autocomplete="off">
+      <!-- Shared by both stages: it is the same person either way. -->
+      <section class="panel">
+        <div class="panel-head"><h2 class="panel-title">Who this is for</h2></div>
+        <div class="panel-body">
+          <div class="field" style="border-top:0">
+            <div class="field-top"><label for="in-name">First name</label></div>
+            <input type="text" id="in-name" placeholder="optional" maxlength="40" autocomplete="off">
+          </div>
+          <div class="field">
+            <div class="field-top"><label for="in-age">Age</label><output id="out-age"></output></div>
+            <input type="range" id="in-age" min="19" max="45" step="1">
+          </div>
+          <div class="field">
+            <div class="field-top"><label for="in-field">Field of study</label></div>
+            <select id="in-field"></select>
+            <p class="stem-note" id="stem-note" hidden></p>
+          </div>
+          <p class="privacy">
+            Nothing you type here leaves your browser. There is no account, no server and no
+            analytics on this page — the whole model runs on your own machine.
+          </p>
+        </div>
+      </section>
+
      <div class="rail-group" id="rail-before">
       <section class="panel">
         <div class="panel-head"><h2 class="panel-title">The money</h2></div>
@@ -1271,6 +1319,78 @@
   const RESIDENT_CONFIG = { paths: 2200, horizonMonths: 120, seed: "downside-resident-v1" };
   const RISK_TARGET = 0.1;
 
+  /**
+   * Fields of study. Mirrors src/data/programs.ts, and placeholder priors like
+   * everything else. Field of study is not decoration here: it moves the wage
+   * curve, the chance of an offer, and — the one applicants find out too late —
+   * STEM eligibility, which decides whether post-study work authorisation runs
+   * 12 months or 36, and so whether you get one shot at the lottery or three.
+   */
+  const wageCurve = (a, b, c, d, e) => ({
+    points: [{ p: .1, v: a }, { p: .25, v: b }, { p: .5, v: c }, { p: .75, v: d }, { p: .9, v: e }],
+  });
+  const SEARCH = { points: [{ p: .1, v: 0 }, { p: .25, v: 1 }, { p: .5, v: 3 }, { p: .75, v: 6 }, { p: .9, v: 10 }] };
+  const SLOWER = { points: [{ p: .1, v: 1 }, { p: .25, v: 2 }, { p: .5, v: 4 }, { p: .75, v: 8 }, { p: .9, v: 12 }] };
+
+  const FIELDS = {
+    cs: { stemEligible: true, program: { label: "Computer Science / Software",
+      firstYearWage: wageCurve(78000, 95000, 115000, 140000, 175000), pDestOffer: .72,
+      monthsToOffer: SEARCH, realWageGrowthDest: .04 } },
+    data: { stemEligible: true, program: { label: "Data Science / Analytics",
+      firstYearWage: wageCurve(72000, 88000, 108000, 132000, 165000), pDestOffer: .68,
+      monthsToOffer: SEARCH, realWageGrowthDest: .04 } },
+    ece: { stemEligible: true, program: { label: "Electrical / Computer Engineering",
+      firstYearWage: wageCurve(72000, 86000, 104000, 126000, 158000), pDestOffer: .62,
+      monthsToOffer: SLOWER, realWageGrowthDest: .035 } },
+    mech: { stemEligible: true, program: { label: "Mechanical / Industrial Engineering",
+      firstYearWage: wageCurve(62000, 72000, 86000, 102000, 125000), pDestOffer: .5,
+      monthsToOffer: SLOWER, realWageGrowthDest: .03 } },
+    is: { stemEligible: true, program: { label: "Information Systems / IT Management",
+      firstYearWage: wageCurve(66000, 80000, 96000, 118000, 145000), pDestOffer: .6,
+      monthsToOffer: SLOWER, realWageGrowthDest: .035 } },
+    business: { stemEligible: false, program: { label: "Business / Management (non-STEM)",
+      firstYearWage: wageCurve(60000, 74000, 92000, 118000, 155000), pDestOffer: .52,
+      monthsToOffer: SLOWER, realWageGrowthDest: .045 } },
+  };
+
+  const profile = { name: "", age: 23, field: "cs" };
+
+  /** Anything a person types is escaped before it can reach innerHTML. */
+  function esc(s) {
+    return String(s).replace(/[&<>"']/g, (c) =>
+      ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
+  }
+
+  /** "Priya, " when a name is given, "" when it is not. Copy reads either way. */
+  const addressed = () => (profile.name.trim() === "" ? "" : esc(profile.name.trim()) + ", ");
+
+  /** Push the chosen field into both stages, including STEM eligibility. */
+  function applyField() {
+    const f = FIELDS[profile.field];
+    state.program = { ...state.program, ...structuredClone(f.program) };
+    state.corridor.immigration.stemEligible = f.stemEligible;
+    resident.corridor.immigration.stemEligible = f.stemEligible;
+    state.ageAtStart = profile.age;
+    resident.ageNow = profile.age;
+
+    const note = document.getElementById("stem-note");
+    if (f.stemEligible) {
+      note.hidden = true;
+    } else {
+      note.hidden = false;
+      note.innerHTML = "<b>Not STEM-designated.</b> Post-study work runs 12 months instead of 36, " +
+        "so you get <b>one</b> shot at the visa lottery rather than three. This is the single " +
+        "biggest thing field of study changes, and it is rarely mentioned at application time.";
+    }
+
+    const who = [
+      profile.name.trim() === "" ? "" : esc(profile.name.trim()),
+      profile.age + " years old",
+      esc(f.program.label),
+    ].filter((x) => x !== "").join(" · ");
+    document.getElementById("whofor").textContent = who;
+  }
+
   /* =====================================================================
      FORMATTING
      ===================================================================== */
@@ -1504,6 +1624,11 @@
      ===================================================================== */
 
   function readingFor(p) {
+    const lead = (s) => (profile.name.trim() === "" ? s : s.charAt(0).toLowerCase() + s.slice(1));
+    return lead(readingBody(p));
+  }
+
+  function readingBody(p) {
     if (p >= .5) return "More likely than not. In most simulated lives you are back in India servicing a debt that was sized in dollars, on a salary that is not.";
     if (p >= .35) return "Close to half of all simulated lives end with a rupee income against a dollar-priced debt. This is the number the decision should turn on.";
     if (p >= .2) return "Roughly one life in four ends back home still carrying the debt. A minority of paths, but nowhere near a remote one.";
@@ -1517,7 +1642,7 @@
     hero.textContent = pct(result.pRepayFromHomeIncome, 0);
     hero.style.color = result.pRepayFromHomeIncome >= .3 ? "var(--loss)"
       : (result.pRepayFromHomeIncome >= .12 ? "var(--ink)" : "var(--gain)");
-    document.getElementById("hero-read").textContent = readingFor(result.pRepayFromHomeIncome);
+    document.getElementById("hero-read").innerHTML = addressed() + readingFor(result.pRepayFromHomeIncome);
 
     document.getElementById("s-offer").textContent  = pct(result.pDestJob, 0);
     document.getElementById("s-visa").textContent   = pct(result.pVisaSelected, 0);
@@ -1669,8 +1794,8 @@
       '<div class="total"><dt>Left over each month</dt><dd>' + usd(cash.surplus) +
       '<span class="aside">' + inr(cash.surplus * fx) + '</span></dd></div>';
     document.getElementById("r-ledger-read").innerHTML = cash.surplus <= 0
-      ? "You are spending more than you earn. Nothing below fixes that on its own."
-      : "So you are putting away about <b>" + usd(cash.surplus) + "</b> a month, before anything goes wrong.";
+      ? addressed() + (profile.name.trim() ? "you are" : "You are") + " spending more than you earn. Nothing below fixes that on its own."
+      : "" + (profile.name.trim() ? esc(profile.name.trim()) + ", you are" : "So you are") + " putting away about <b>" + usd(cash.surplus) + "</b> a month, before anything goes wrong.";
 
     // --- where to give ground ---
     const advice = residentAdvice(resident, RESIDENT_CONFIG);
@@ -1843,6 +1968,36 @@
     toggle.textContent = open ? "Hide table" : "Table";
   });
 
+  // --- who this is for -----------------------------------------------------
+  const nameEl = document.getElementById("in-name");
+  const ageEl = document.getElementById("in-age");
+  const fieldEl = document.getElementById("in-field");
+
+  fieldEl.innerHTML = Object.entries(FIELDS)
+    .map(([k, f]) => '<option value="' + k + '">' + esc(f.program.label) + "</option>")
+    .join("");
+  fieldEl.value = profile.field;
+  ageEl.value = profile.age;
+  document.getElementById("out-age").textContent = profile.age;
+
+  nameEl.addEventListener("input", () => {
+    profile.name = nameEl.value;
+    applyField();
+    schedule();
+  });
+  ageEl.addEventListener("input", () => {
+    profile.age = Number(ageEl.value);
+    document.getElementById("out-age").textContent = profile.age;
+    applyField();
+    schedule();
+  });
+  fieldEl.addEventListener("change", () => {
+    profile.field = fieldEl.value;
+    applyField();
+    schedule();
+  });
+
+  applyField();
   buildControls();
   schedule();
 })();
